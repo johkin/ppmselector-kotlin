@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
+         version="2.5">
+  <servlet>
+    <servlet-name>fundReaderServlet</servlet-name>
+    <servlet-class>se.acrend.ppm.servlet.FundReaderServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>fundReaderServlet</servlet-name>
+    <url-pattern>/cron/readfunds</url-pattern>
+  </servlet-mapping>
+</web-app>
