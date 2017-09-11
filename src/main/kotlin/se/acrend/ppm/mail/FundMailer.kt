@@ -36,11 +36,12 @@ class FundMailer {
     @Throws(Exception::class)
     fun sendMail(funds: List<FundInfo>) {
 
-        val key = "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"
-//        val key = System.getProperty("sendgrid.api.key")
+
+        val key = System.getProperty("sendgrid.api.key")
         val sendGrid = SendGrid(key)
 
-        val from = Email("mailer@ppmselector.appspotmail.com", "PPM-väljaren")
+        val from = Email("johan.kindgren@gmail.com", "PPM-väljaren")
+//        val from = Email("mailer@ppmselector.appspotmail.com", "PPM-väljaren")
         val subject = "Nytt val för PPM-fonder!"
         val to = Email("ppmselector@googlegroups.com")
         val htmlBody = createHtmlMessage(funds)
