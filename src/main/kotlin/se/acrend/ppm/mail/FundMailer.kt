@@ -40,10 +40,11 @@ class FundMailer {
         val key = System.getProperty("sendgrid.api.key")
         val sendGrid = SendGrid(key)
 
-        val from = Email("johan.kindgren@gmail.com", "PPM-väljaren")
-//        val from = Email("mailer@ppmselector.appspotmail.com", "PPM-väljaren")
+
+        val from = Email("mailer@ppmselector.appspotmail.com", "PPM-väljaren")
         val subject = "Nytt val för PPM-fonder!"
-        val to = Email("ppmselector@googlegroups.com")
+        val to = Email("johan.kindgren@gmail.com")
+//        val to = Email("ppmselector@googlegroups.com")
         val htmlBody = createHtmlMessage(funds)
         val mail = Mail(from, subject, to, Content("text/plain", "Dags att byta fonder igen!"))
         mail.addContent(Content("text/html", htmlBody))
@@ -53,8 +54,7 @@ class FundMailer {
             request.method = Method.POST
             request.endpoint = "mail/send"
             request.body = mail.build()
-            val response = sendGrid.api(request)
-            println(response.statusCode)
+            sendGrid.api(request)
         } catch (ex: IOException) {
             throw ex
         }
@@ -62,7 +62,7 @@ class FundMailer {
     }
 
     @Throws(Exception::class)
-    internal fun createHtmlMessage(funds: List<FundInfo>): String {
+    fun createHtmlMessage(funds: List<FundInfo>): String {
 
         val args = HashMap<String, Any>()
         args.put("funds", funds)
