@@ -7,4 +7,4 @@ import java.time.LocalDate
  *
  */
 @Document
-data class SelectedFund(val id: String, val fund: FundInfo, val date: LocalDate)
+data class SelectedFund(val id: String, val fund: FundInfo, val date: LocalDate, val strategy: Strategy)

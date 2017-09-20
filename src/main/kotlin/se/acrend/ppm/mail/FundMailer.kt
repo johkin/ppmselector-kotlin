@@ -13,8 +13,7 @@ import org.springframework.stereotype.Component
 import se.acrend.ppm.domain.FundInfo
 
 import java.io.IOException
-import java.util.HashMap
-import java.util.Properties
+import java.util.*
 
 
 /**
@@ -34,8 +33,10 @@ class FundMailer {
     }
 
     @Throws(Exception::class)
-    fun sendMail(funds: List<FundInfo>) {
+    fun sendMail(fund: FundInfo) {
 
+
+        val funds: List<FundInfo> = Arrays.asList(fund)
 
         val key = System.getProperty("sendgrid.api.key")
         val sendGrid = SendGrid(key)
