@@ -110,4 +110,21 @@ class MorningstarParser {
 
     }
 
+
+
+    fun parseDetails(body: String): FundInfo {
+
+        val document = Jsoup.parse(body, "http://www.morningstar.se/")
+
+        val priceCell = document.select("div#ctl00_ctl01_cphContent_cphMain_quicktake1_col333_OverviewGeneralItem1_ctl04 > table > tbody > tr:eq(0) > td:eq(1)")
+        val text = priceCell.text()
+        val numbers = text.substring(0, text.length - 3).trim()
+        val price = decimalFormat.parse(numbers)
+
+        val fundInfo = FundInfo("", "")
+        fundInfo.price = price.toFloat()
+
+        return fundInfo
+    }
+
 }

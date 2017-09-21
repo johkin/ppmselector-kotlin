@@ -9,9 +9,11 @@ import reactor.core.publisher.Mono
 import se.acrend.ppm.domain.FundInfo
 import se.acrend.ppm.domain.SelectedFund
 import se.acrend.ppm.domain.Strategy
+import se.acrend.ppm.domain.Transaction
 import se.acrend.ppm.mail.FundMailer
 import se.acrend.ppm.parser.MorningstarParser
 import se.acrend.ppm.repository.SelectedFundRepository
+import se.acrend.ppm.repository.TransactionRepository
 import java.time.LocalDate
 import java.util.function.BiFunction
 import java.util.function.Consumer
@@ -31,15 +33,18 @@ class FundReaderService {
 
     @Autowired
     lateinit var selectedFundRepository: SelectedFundRepository
+    @Autowired
+    lateinit var transactionRepository: TransactionRepository
 
     fun readFunds() {
+
 
         // Hämta den lagrade fonden från databasen,
         // om det inte finns någon tidigare lagrad, lagra en dummy-post
         val selectedFund: Mono<SelectedFund> = selectedFundRepository.findByStrategy(Strategy.ThreeMonth)
                 .switchIfEmpty(
                         selectedFundRepository.save(
-                                SelectedFund("", FundInfo("Dummy Fund", ""), LocalDate.now(), Strategy.ThreeMonth)))
+                                SelectedFund(null, FundInfo("Dummy Fund", ""), LocalDate.now(), Strategy.ThreeMonth)))
 
         // Hämta information från Morningstar
         val fundInfo: Mono<FundInfo> = createFundInfoStream("Month_3")
@@ -53,7 +58,24 @@ class FundReaderService {
                     if (composite.isFundEqual()) {
                         Mono.empty<SelectedFund>()
                     } else {
+
+
+                        transactionRepository.save(
+                                Transaction(id = null, fund = composite.fund, buyDate = LocalDate.now().plusDays(3), buyPrice = null, sellDate = null, sellPrice = null, returnPercent = null))
+                                .flatMap { newTransaction ->
+                                    transactionRepository.findByFundNameAndSellDateNull(composite.selected.fund.name)
+                                            .log()
+                                            .flatMap { previousTransaction ->
+                                                transactionRepository.save(
+                                                        previousTransaction.copy(sellDate = LocalDate.now().plusDays(3)))
+                                            }
+                                }
+                                .subscribe()
+
+
                         val newSelected = composite.selected.copy(fund = composite.fund, date = LocalDate.now())
+
+
                         selectedFundRepository.save(newSelected)
                     }
                 }
@@ -105,6 +127,52 @@ class FundReaderService {
                 .exchange()
                 .flatMap { response -> response.bodyToMono(String::class.java) }
                 .flatMapMany { body -> Flux.fromIterable(parseMethod(body)) }
+    }
+
+    fun updatePrice() {
+
+        readPrice(transactionRepository.findByBuyDateAndBuyPriceNull(LocalDate.now()))
+                .flatMap { pair ->
+                    val updatedTransaction = pair.first.copy(buyPrice = pair.second.price)
+                    transactionRepository.save(updatedTransaction)
+                }
+                .concatWith(
+
+                        readPrice(transactionRepository.findBySellDateAndSellPriceNull(LocalDate.now()))
+                                .flatMap { pair ->
+                                    val transaction = pair.first
+                                    val fundInfo = pair.second
+                                    val returnPercent =
+                                            if (fundInfo.price != null && transaction.buyPrice != null) {
+                                                val sellPrice = fundInfo.price ?: 0f
+                                                (sellPrice - transaction.buyPrice) / transaction.buyPrice * 100
+                                            } else {
+                                                null
+                                            }
+
+                                    val updatedTransaction = transaction.copy(sellPrice = fundInfo.price,
+                                            returnPercent = returnPercent)
+
+                                    transactionRepository.save(updatedTransaction)
+                                }
+                )
+                .subscribe()
+
+
+    }
+
+    fun readPrice(transactions: Flux<Transaction>): Flux<Pair<Transaction, FundInfo>> {
+        return transactions.flatMap { transaction ->
+            client.get()
+                    .uri(transaction.fund.url)
+                    .exchange()
+                    .flatMap { response -> response.bodyToMono(String::class.java) }
+                    .flatMap { body ->
+                        val fundInfo = parser.parseDetails(body)
+
+                        Mono.just(Pair(transaction, fundInfo))
+                    }
+        }
     }
 }
 

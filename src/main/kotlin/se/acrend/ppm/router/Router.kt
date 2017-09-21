@@ -26,23 +26,17 @@ class Router {
     @Bean
     fun routes() = router {
 
-        path("/load").invoke { request ->
-
-            ServerResponse.ok().body(BodyInserters.fromPublisher(transactionRepo.findAll(), Transaction::class.java))
-        }
-        path("/store").invoke { request ->
-
-            val result = transactionRepo.saveAll(listOf(
-                    Transaction("1", "Fund1", LocalDate.of(2016, 2, 22), LocalDate.of(2016, 5, 20))))
-
-            ServerResponse.ok().body(BodyInserters.fromPublisher(result, Transaction::class.java))
-        }
-
         path("/readFunds").invoke { request ->
 
             service.readFunds()
 
             ServerResponse.ok().body(BodyInserters.fromObject("Reading funds"))
+        }
+        path("/updatePrice").invoke { request ->
+
+            service.updatePrice()
+
+            ServerResponse.ok().body(BodyInserters.fromObject("Updating price"))
         }
     }
 
