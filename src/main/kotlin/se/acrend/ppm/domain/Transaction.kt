@@ -9,6 +9,7 @@ import java.time.LocalDate
  */
 @Document
 data class Transaction(@Id val id: String?, val fund: FundInfo,
+                       val strategy: Strategy,
                        val buyDate: LocalDate, val buyPrice: Float?,
                        val sellDate: LocalDate?, val sellPrice: Float?,
                        val returnPercent: Float?)
