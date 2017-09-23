@@ -25,18 +25,12 @@ class MongoConfig : AbstractReactiveMongoConfiguration() {
     }
 
     @Bean
-    override fun mongoClient(): MongoClient {
+    override fun reactiveMongoClient(): MongoClient {
         val uri = environment.getProperty("MONGODB_URI")
         return MongoClients.create(uri)
     }
 
     override fun getDatabaseName(): String {
         return "heroku_gtpjl1qw"
-    }
-
-
-    @Bean
-    override fun reactiveMongoTemplate(): ReactiveMongoTemplate {
-        return ReactiveMongoTemplate(mongoClient(), getDatabaseName())
     }
 }
