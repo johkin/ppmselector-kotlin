@@ -1,5 +1,6 @@
 package se.acrend.ppm.service
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
@@ -24,6 +25,8 @@ import java.util.function.BiFunction
 @Service
 class FundReaderService {
 
+    val logger = LoggerFactory.getLogger(FundReaderService::class.java)
+
     val client = WebClient.create()
 
     @Autowired
@@ -40,6 +43,8 @@ class FundReaderService {
 
 //        val strategy = Strategy.ThreeMonth
         for (strategy in Strategy.values()) {
+
+            logger.info("Läser fonder för strategi ${strategy.description}")
 
 
             // Hämta den lagrade fonden från databasen,
@@ -66,8 +71,13 @@ class FundReaderService {
                     .next()
                     .flatMap { composite ->
                         if (composite.isFundEqual()) {
+                            logger.info("För strategi ${strategy.description} är det samma fond: ${composite.fund.name}, avslutar.")
+
                             Mono.empty<SelectedFund>()
                         } else {
+
+                            logger.info("För strategi ${strategy.description} är det ny fond: ${composite.fund.name}.")
+
                             updateTransactionInfo(composite)
 
                             val newSelected = composite.selected.copy(fund = composite.fund, date = LocalDate.now())
@@ -76,10 +86,20 @@ class FundReaderService {
                         }
                     }
                     .flatMap { selectedFund ->
+                        logger.info("Skapar meddelande för ${strategy.description}")
+
                         mailer.createHtmlMessage(selectedFund.fund)
                     }
-                    .flatMap(mailer::sendMail)
-                    .subscribe()
+                    .flatMap { message ->
+                        logger.info("Skickar meddelande för ${strategy.description}")
+
+                        mailer.sendMail(message)
+                    }
+                    .subscribe({ result ->
+                        logger.info("För strategi ${strategy.description}, resultat:", result)
+                    }, { error ->
+                        logger.error("För strategi ${strategy.description}, fel:", error)
+                    })
         }
     }
 
@@ -146,8 +166,12 @@ class FundReaderService {
 
     fun updatePrice() {
 
+        logger.info("Updaterar priser")
+
         readPrice(transactionRepository.findByBuyDateAndBuyPriceNull(LocalDate.now()))
                 .flatMap { pair ->
+                    logger.info("Uppdaterar köp-pris för fond ${pair.first.fund.name} till ${pair.second.price}")
+
                     val updatedTransaction = pair.first.copy(buyPrice = pair.second.price)
                     transactionRepository.save(updatedTransaction)
                 }
@@ -156,6 +180,9 @@ class FundReaderService {
 
         readPrice(transactionRepository.findBySellDateAndSellPriceNull(LocalDate.now()))
                 .flatMap { pair ->
+
+                    logger.info("Uppdaterar sälj-pris för fond ${pair.first.fund.name} till ${pair.second.price}")
+
                     val transaction = pair.first
                     val fundInfo = pair.second
                     val returnPercent =
@@ -178,6 +205,7 @@ class FundReaderService {
 
     fun readPrice(transactions: Flux<Transaction>): Flux<Pair<Transaction, FundInfo>> {
         return transactions.flatMap { transaction ->
+            logger.info("Hämtar detaljer för fond ${transaction.fund.name}")
             client.get()
                     .uri(transaction.fund.url)
                     .exchange()
