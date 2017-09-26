@@ -63,6 +63,7 @@ dependencies {
 
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
+    testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
 }
 
 //bootRun {

@@ -28,6 +28,8 @@ class FundReaderService {
 
     val logger = LoggerFactory.getLogger(FundReaderService::class.java)
 
+    val FUND_CHANGE_DAYS = 3
+
     val client = WebClient.create()
 
     @Autowired
@@ -93,12 +95,12 @@ class FundReaderService {
                     .flatMap { selectedFund ->
                         logger.info("Skapar meddelande för ${strategy.description}")
 
-                        mailer.createHtmlMessage(selectedFund.fund)
+                        mailer.createHtmlMessage(selectedFund.fund, strategy)
                     }
                     .flatMap { message ->
                         logger.info("Skickar meddelande för ${strategy.description}")
 
-                        mailer.sendMail(message)
+                        mailer.sendMail("Nytt val för PPM-fonder, ${strategy.description}!", message)
                     }
                     .subscribe({ result ->
                         logger.info("För strategi ${strategy.description}, resultat:", result)
@@ -109,16 +111,17 @@ class FundReaderService {
     }
 
     private fun updateTransactionInfo(composite: CompositeFund) {
+
         transactionRepository.save(
                 Transaction(id = null, fund = composite.fund, strategy = composite.selected.strategy,
-                        buyDate = LocalDate.now().plusDays(3),
+                        buyDate = LocalDate.now().plusWeekDays(FUND_CHANGE_DAYS),
                         buyPrice = null, sellDate = null, sellPrice = null, returnPercent = null))
                 .flatMap { newTransaction ->
                     transactionRepository.findByFundNameAndStrategyAndSellDateNull(composite.selected.fund.name, composite.selected.strategy)
                             .log()
                             .flatMap { previousTransaction ->
                                 transactionRepository.save(
-                                        previousTransaction.copy(sellDate = LocalDate.now().plusDays(3)))
+                                        previousTransaction.copy(sellDate = LocalDate.now().plusWeekDays(FUND_CHANGE_DAYS)))
                             }
                 }
                 .subscribe()
@@ -181,7 +184,11 @@ class FundReaderService {
                     val updatedTransaction = pair.first.copy(buyPrice = pair.second.price)
                     transactionRepository.save(updatedTransaction)
                 }
-                .subscribe()
+                .subscribe({ result ->
+                    logger.info("Köp-pris för fond ${result.fund.name} uppdaterad.")
+                }, { error ->
+                    logger.error("Kunde inte hämta köp-pris.", error)
+                })
 
 
         readPrice(transactionRepository.findBySellDateAndSellPriceNull(LocalDate.now()))
@@ -191,6 +198,7 @@ class FundReaderService {
 
                     val transaction = pair.first
                     val fundInfo = pair.second
+
                     val returnPercent =
                             if (fundInfo.price != null && transaction.buyPrice != null) {
                                 val sellPrice = fundInfo.price ?: 0f
@@ -204,7 +212,11 @@ class FundReaderService {
 
                     transactionRepository.save(updatedTransaction)
                 }
-                .subscribe()
+                .subscribe({ result ->
+                    logger.info("Sälj-pris för fond ${result.fund.name} uppdaterad.")
+                }, { error ->
+                    logger.error("Kunde inte hämta sälj-pris.", error)
+                })
 
 
     }
@@ -223,16 +235,16 @@ class FundReaderService {
                     }
         }
     }
+}
 
-    fun addWeekDays(date: LocalDate, weekDays: Int): LocalDate {
-        if (weekDays < 1) {
-            return date
-        }
-        if (date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY) {
-            return addWeekDays(date.plusDays(1), weekDays)
-        }
-        return addWeekDays(date.plusDays(1), weekDays - 1)
+fun LocalDate.plusWeekDays(weekDays: Int): LocalDate {
+    if (weekDays < 1) {
+        return this
     }
+    if (this.dayOfWeek == DayOfWeek.SATURDAY || this.dayOfWeek == DayOfWeek.SUNDAY) {
+        return this.plusDays(1).plusWeekDays(weekDays)
+    }
+    return this.plusDays(1).plusWeekDays(weekDays - 1)
 }
 
 class CompositeFund(val selected: SelectedFund, val fund: FundInfo) {

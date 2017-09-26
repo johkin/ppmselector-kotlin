@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import se.acrend.ppm.domain.FundInfo;
+import se.acrend.ppm.domain.Strategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +29,13 @@ public class FundMailerTest {
 
         List<FundInfo> funds = new ArrayList<>();
 
-//        FundInfo fund = new FundInfo();
-//        fund.setName("Fond 1");
-//        fund.setUrl("url-1");
-//        fund.setPpmNumber("123456");
-//        funds.add(fund);
-//
-//        String message = mailer.createHtmlMessage(funds);
-//
-//        System.out.println(message);
+        FundInfo fund = new FundInfo("Fond 1", "url-1");
+        fund.setPpmNumber("123456");
+        funds.add(fund);
+
+        String message = mailer.createHtmlMessage(fund, Strategy.OneMonth).block();
+
+        System.out.println(message);
 
     }
 
