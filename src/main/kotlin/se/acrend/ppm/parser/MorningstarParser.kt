@@ -1,9 +1,11 @@
 package se.acrend.ppm.parser
 
 import org.jsoup.Jsoup
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import se.acrend.ppm.domain.FundInfo
 import java.text.DecimalFormat
+import java.text.NumberFormat
 import java.util.*
 
 /**
@@ -12,8 +14,7 @@ import java.util.*
 @Component
 class MorningstarParser {
 
-    val decimalFormat = DecimalFormat.getInstance(
-            Locale("sv", "SE"))
+    val logger = LoggerFactory.getLogger(MorningstarParser::class.java)
 
 
     fun parseReturns(contents: String): List<FundInfo> {
@@ -50,10 +51,15 @@ class MorningstarParser {
     }
 
     fun parseGrowth(text: String): Float {
-        if ("-".contentEquals(text)) {
+        try {
+            if ("-".contentEquals(text) || text.isEmpty()) {
+                return -1f
+            }
+            return getDecimalFormat().parse(text).toFloat()
+        } catch (e: NumberFormatException) {
+            logger.error("Kunde inte avläsa utveckling: $text", e)
             return -1f
         }
-        return decimalFormat.parse(text).toFloat()
     }
 
     fun parseMisc(contents: String): List<FundInfo> {
@@ -101,7 +107,7 @@ class MorningstarParser {
             val info = FundInfo(link.text(), "http://www.morningstar.se" + link.attr("href")
                     .substring(2))
 
-            info.fee = decimalFormat.parse(row.select("td:eq(8)").text()).toFloat()
+            info.fee = getDecimalFormat().parse(row.select("td:eq(8)").text()).toFloat()
 
             result.add(info)
         }
@@ -111,7 +117,6 @@ class MorningstarParser {
     }
 
 
-
     fun parseDetails(body: String): FundInfo {
 
         val document = Jsoup.parse(body, "http://www.morningstar.se/")
@@ -119,12 +124,17 @@ class MorningstarParser {
         val priceCell = document.select("div#ctl00_ctl01_cphContent_cphMain_quicktake1_col333_OverviewGeneralItem1_ctl04 > table > tbody > tr:eq(0) > td:eq(1)")
         val text = priceCell.text()
         val numbers = text.substring(0, text.length - 3).trim()
-        val price = decimalFormat.parse(numbers)
+        val price = getDecimalFormat().parse(numbers)
 
         val fundInfo = FundInfo("", "")
         fundInfo.price = price.toFloat()
 
         return fundInfo
+    }
+
+    fun getDecimalFormat(): NumberFormat {
+        return DecimalFormat.getInstance(
+                Locale("sv", "SE"))
     }
 
 }
