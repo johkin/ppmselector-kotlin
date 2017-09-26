@@ -1,8 +1,11 @@
 package se.acrend.ppm.domain
 
+import org.springframework.data.mongodb.core.mapping.Document
+
 /**
  *
  */
+@Document
 data class FundInfo(val name: String, val url: String) {
 
     var ppmNumber: String? = null
