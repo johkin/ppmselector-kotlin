@@ -6,6 +6,7 @@ import org.rythmengine.RythmEngine
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 import se.acrend.ppm.domain.FundInfo
+import se.acrend.ppm.domain.Strategy
 import java.util.*
 
 
@@ -26,13 +27,12 @@ class FundMailer {
     }
 
 
-    fun sendMail(contents: String): Mono<Boolean> {
+    fun sendMail(subject: String, contents: String): Mono<Boolean> {
 
         val key = System.getProperty("sendgrid.api.key")
         val sendGrid = SendGrid(key)
 
         val from = Email("mailer@ppmselector.appspotmail.com", "PPM-väljaren")
-        val subject = "Nytt val för PPM-fonder!"
         val to = Email("johan.kindgren@gmail.com")
 //        val to = Email("ppmselector@googlegroups.com")
 
@@ -49,12 +49,13 @@ class FundMailer {
         return Mono.just(true)
     }
 
-    fun createHtmlMessage(fund: FundInfo): Mono<String> {
+    fun createHtmlMessage(fund: FundInfo, strategy: Strategy): Mono<String> {
 
         val funds: List<FundInfo> = Arrays.asList(fund)
 
         val args = HashMap<String, Any>()
         args.put("funds", funds)
+        args.put("strategy", strategy)
 
         val template = IOUtils.toString(javaClass.getResourceAsStream("/templates/mail.html"), "UTF-8")
 
