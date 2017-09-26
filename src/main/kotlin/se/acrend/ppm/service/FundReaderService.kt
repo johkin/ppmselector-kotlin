@@ -7,6 +7,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import se.acrend.ppm.control.PensionsMyndighetenController
 import se.acrend.ppm.domain.FundInfo
 import se.acrend.ppm.domain.SelectedFund
 import se.acrend.ppm.domain.Strategy
@@ -33,6 +34,10 @@ class FundReaderService {
     lateinit var parser: MorningstarParser
     @Autowired
     lateinit var mailer: FundMailer
+
+
+    @Autowired
+    lateinit var pensionsMyndighetenController: PensionsMyndighetenController
 
     @Autowired
     lateinit var selectedFundRepository: SelectedFundRepository
@@ -151,6 +156,7 @@ class FundReaderService {
                     fundInfo.growthMonth >= 0 &&
                             fundInfo.growthWeek >= 0
                 })
+                .filterWhen(pensionsMyndighetenController::existsInPensionsMyndigheten)
                 .next()
 
         return fundInfoMono
