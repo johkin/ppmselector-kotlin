@@ -16,9 +16,6 @@ buildscript {
 }
 
 repositories {
-//    maven {
-//        url 'https://maven-central.storage.googleapis.com'             // Google's mirror of Maven Central
-//    }
     jcenter()
     mavenCentral()
     maven { url "https://repo.spring.io/snapshot" }
@@ -36,39 +33,24 @@ apply plugin: 'io.spring.dependency-management'
 dependencies {
 
     compile('org.springframework.boot:spring-boot-starter-webflux')
+    compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
+
     compile("org.jetbrains.kotlin:kotlin-stdlib-jre8:${kotlinVersion}")
     compile("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
 
     compile 'com.sendgrid:sendgrid-java:4.0.1'
     compile 'org.rythmengine:rythm-engine:1.2.0'
-//    compile 'org.slf4j:slf4j-jdk14:1.7.25'
 
     compile 'org.jsoup:jsoup:1.10.3'
-    compile 'commons-io:commons-io:2.5'
-
-
-
-
-//    compile("org.springframework.boot:spring-boot-starter-web") {
-//        exclude module: "spring-boot-starter-tomcat"
-//    }
-    compile("org.springframework.boot:spring-boot-starter-jetty")
-
-    compile("org.springframework.boot:spring-boot-devtools")
-    compile('org.springframework.boot:spring-boot-starter-data-mongodb-reactive')
-
 
     testCompile "org.jetbrains.kotlin:kotlin-test"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit"
 
+    testCompile("org.springframework.boot:spring-boot-devtools")
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
     testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
 }
-
-//bootRun {
-//    systemProperties['spring.profiles.active']=project.gradle.startParameter.systemPropertiesArgs['spring.profiles.active'];
-//}
 
 kotlin {
 
@@ -77,34 +59,8 @@ kotlin {
     }
 }
 
-//compileKotlin {
-//    kotlinOptions {
-//        jvmTarget = '1.8'
-//    }
-//}
-
-
-//war {
-//    expand(SendgridApiKey: SendGridApiKey)
-//}
-
-//appengine {  // App Engine tasks configuration
-//    run {      // local (dev_appserver) configuration (standard environments only)
-//        port = 8080                 // default
-//    }
-//
-//    deploy {   // deploy configuration
-//        stopPreviousVersion = true  // default - stop the current version
-//        promote = true              // default - & make this the current version
-//    }
-//}
-
 group = 'se.acrend.ppm'
 version = '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '4.1'
-}
