@@ -19,4 +19,6 @@ data class FundInfo(val name: String, val url: String) {
     var growthYear: Float = 0f
     var date: String? = null
 
+
+
 }

@@ -10,5 +10,4 @@ import org.springframework.data.mongodb.core.mapping.Field
 data class PpmFund(@Field("FONDNAMN") val name: String,
                    @Field("FONDNUMMER") val ppmNumber: String,
                    @Field("VALUTA") val currency: String,
-                   @Field("FONDAVGIFT") val fee: String,
                    @Field("EXTERID") val isin: String)

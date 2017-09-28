@@ -43,10 +43,12 @@ dependencies {
 
     compile 'org.jsoup:jsoup:1.10.3'
 
+    compile 'org.apache.poi:poi:3.17'
+
     testCompile "org.jetbrains.kotlin:kotlin-test"
     testCompile "org.jetbrains.kotlin:kotlin-test-junit"
 
-    testCompile("org.springframework.boot:spring-boot-devtools")
+    compile("org.springframework.boot:spring-boot-devtools")
     testCompile('org.springframework.boot:spring-boot-starter-test')
     testCompile('io.projectreactor:reactor-test')
     testCompile 'org.hamcrest:java-hamcrest:2.0.0.0'
