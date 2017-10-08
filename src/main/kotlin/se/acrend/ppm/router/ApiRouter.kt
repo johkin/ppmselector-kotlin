@@ -27,6 +27,8 @@ class ApiRouter(val apiHandler: ApiHandler) {
                 ServerResponse.ok().body(BodyInserters.fromPublisher(
                         Flux.fromIterable(Strategy.values().asList()), Strategy::class.java))
             })
+
+            GET("/selectedFunds", apiHandler::getSelectedFunds)
         }
 
     }
