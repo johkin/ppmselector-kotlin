@@ -1,5 +1,5 @@
 
-IMAGE_NAME = ppmselector
+IMAGE_NAME = ppmselector-builder
 
 .PHONY: build
 build:
