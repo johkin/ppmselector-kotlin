@@ -1,5 +1,10 @@
 language: java
 
+sudo: required
+
+services:
+  - docker
+
 jdk:
   - oraclejdk8
 
@@ -10,3 +15,10 @@ cache:
   directories:
     - $HOME/.gradle/caches/
     - $HOME/.gradle/wrapper/
+
+
+script: ./gradlew buildImage
+
+before_deploy: docker login -u=DOCKER_USERNAME -p=DOCKER_PASSWORD
+
+deploy: docker push johkin/ppmselector
