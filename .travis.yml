@@ -19,9 +19,5 @@ cache:
 
 script:
   - ./gradlew buildImage
-
-before_deploy:
   - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
-
-deploy:
   - docker push johkin/ppmselector
