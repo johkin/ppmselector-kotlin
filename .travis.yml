@@ -17,8 +17,11 @@ cache:
     - $HOME/.gradle/wrapper/
 
 
-script: ./gradlew buildImage
+script:
+  - ./gradlew buildImage
 
-before_deploy: docker login -u=DOCKER_USERNAME -p=DOCKER_PASSWORD
+before_deploy:
+  - docker login -u=$DOCKER_USERNAME -p=$DOCKER_PASSWORD
 
-deploy: docker push johkin/ppmselector
+deploy:
+  - docker push johkin/ppmselector
