@@ -2,6 +2,7 @@ package se.acrend.ppm
 
 import com.mongodb.reactivestreams.client.MongoClient
 import com.mongodb.reactivestreams.client.MongoClients
+import org.rythmengine.RythmEngine
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration
@@ -14,12 +15,25 @@ import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguratio
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 import se.acrend.ppm.config.MongoConfig
+import java.util.HashMap
 
 
 @SpringBootApplication(scanBasePackages = arrayOf("se.acrend.ppm"))
 @Import(value = MongoConfig::class)
 @Configuration
 class PpmselectorKotlinApplication  {
+
+    @Bean
+    fun rythmEngine(): RythmEngine {
+        val conf = HashMap<String, Any>()
+        conf.put("engine.file_write.enabled", false)
+        conf.put("engine.gae.enabled", true)
+
+        return RythmEngine(conf)
+    }
+
+
+
 
 
 }

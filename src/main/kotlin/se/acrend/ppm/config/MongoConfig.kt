@@ -14,10 +14,7 @@ import se.acrend.ppm.repository.TransactionRepository
 
 @Configuration
 @EnableReactiveMongoRepositories(basePackageClasses = arrayOf(TransactionRepository::class))
-class MongoConfig : AbstractReactiveMongoConfiguration() {
-
-    @Autowired
-    lateinit var environment: Environment
+class MongoConfig(val environment: Environment) : AbstractReactiveMongoConfiguration() {
 
     @Bean
     fun mongoEventListener(): LoggingEventListener {

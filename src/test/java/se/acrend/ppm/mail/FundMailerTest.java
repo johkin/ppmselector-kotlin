@@ -3,6 +3,9 @@ package se.acrend.ppm.mail;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.Mockito;
+import org.rythmengine.RythmEngine;
+import org.springframework.core.env.Environment;
 import se.acrend.ppm.domain.FundInfo;
 import se.acrend.ppm.domain.Strategy;
 
@@ -20,7 +23,10 @@ public class FundMailerTest {
 
     @Before
     public void setUp() throws Exception {
-        mailer = new FundMailer();
+
+        Environment environment = Mockito.mock(Environment.class);
+
+        mailer = new FundMailer(new RythmEngine(), environment);
     }
 
     @Test
@@ -38,5 +44,6 @@ public class FundMailerTest {
         System.out.println(message);
 
     }
+
 
 }
