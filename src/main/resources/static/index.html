@@ -21,6 +21,7 @@
 
   <div class="collapse navbar-collapse" id="navbarsExampleDefault">
     <ul class="navbar-nav mr-auto">
+      <!--
       <li class="nav-item active">
         <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
       </li>
@@ -39,52 +40,57 @@
           <a class="dropdown-item" href="#">Something else here</a>
         </div>
       </li>
+      -->
     </ul>
-    <form class="form-inline my-2 my-lg-0">
-      <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-    </form>
   </div>
 </nav>
 
-<div class="fluid-container">
-<div class="row">
+<div class="container-fluid">
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-8">
+        <div class="table-responsive">
+          <table id="selectedFundsTable" class="table table-condensed table-striped">
+            <thead>
+            <tr>
+              <th>Strategi</th>
+              <th>Fond</th>
+              <th>PPM-nummer</th>
+              <th>Datum</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
   <div class="col-md-10">
-    <div class="table-responsive">
-      <table id="selectedFundsTable" class="table table-condensed table-striped">
-        <thead>
-        <tr>
-          <th>Strategi</th>
-          <th>Fond</th>
-          <th>Datum</th>
-          <th>PPM-nummer</th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+    <div class="row">
+      <svg id="graph"></svg>
     </div>
-  </div>
-</div>
-</div>
-
-
-<div class="col-md-10">
-  <div class="row">
-    <svg id="graph"></svg>
-  </div>
-  <!--
-  <div class="row">
-    <div class="btn-group hidden-print">
-      <button type="button" class="btn btn-primary timeFilter active" value="10000">Allt</button>
-      <button type="button" class="btn btn-primary timeFilter" value="10">10 senaste</button>
-      <button type="button" class="btn btn-primary timeFilter" value="5">5 senaste</button>
-      <button type="button" class="btn btn-primary timeFilter" value="3">3 senaste</button>
+    <!--
+    <div class="row">
+      <div class="btn-group hidden-print">
+        <button type="button" class="btn btn-primary timeFilter active" value="10000">Allt</button>
+        <button type="button" class="btn btn-primary timeFilter" value="10">10 senaste</button>
+        <button type="button" class="btn btn-primary timeFilter" value="5">5 senaste</button>
+        <button type="button" class="btn btn-primary timeFilter" value="3">3 senaste</button>
+      </div>
     </div>
+    -->
   </div>
-  -->
 </div>
 
+<footer class="fixed-bottom bg-dark">
+  <div class="container">
+    <span class="text-muted pull-right">Copyright Johan Kindgren</span>
+  </div>
+</footer>
 
 <script src="https://d3js.org/d3.v4.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
