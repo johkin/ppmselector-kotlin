@@ -3,6 +3,9 @@ var width = 960 - margin.left - margin.right;
 var height = 590 - margin.top - margin.bottom;
 
 var dateParser = d3.timeParse("%Y-%m-%d");
+var formatDate = d3.timeFormat("%Y-%m-%d");
+
+var legend = null
 
 var svg = d3.select("#graph")
 
@@ -39,22 +42,12 @@ var y = d3.scaleLinear()
     .range([height, 0]);
 
 var colorScale = d3.scaleOrdinal()
-    .range(d3.schemeCategory20)
+    .range(d3.schemeCategory20);
 
 var xAxis = d3.axisBottom()
     .scale(x)
     .ticks(5)
     .tickFormat(d3.timeFormat('%Y-%m-%d'))
-
-var drawline = function (yRef) {
-    return d3.line()
-        .x(function (d) {
-            return x(d.date)
-        })
-        .y(function (d) {
-            return yRef(d.value)
-        })
-}
 
 var createHtmlTableCell = function (cellData, index) {
     if (cellData) {
@@ -125,12 +118,30 @@ function createXAxis(transactions) {
 }
 
 var line = d3.line()
-    .x(function(d) { return x(d.date); })
-    .y(function(d) { return y(d.value); });
+    .x(function (d) {
+        return x(d.date);
+    })
+    .y(function (d) {
+        return y(d.value);
+    });
+
+var createToolTipContents = function (value) {
+
+    var contents = "Datum: " + formatDate(new Date(value.buyDate)) + "<br/>"
+    contents += "<b>Fond: " + value.fundName + "</b><br>"
+    contents += "<b>Utveckling: " + value.returnPercent + "%</b>"
+
+
+    return contents
+}
+
+var div = d3.select("#tooltip");
+
 
 function createGraph() {
     d3.json("./api/transactions", function (error, transactions) {
         if (!error) {
+            console.log("debug", "transactions: ")
             console.log("debug", transactions)
 
             createXAxis(transactions);
@@ -139,9 +150,10 @@ function createGraph() {
 
             d3.map(transactions).each(function (arr, key) {
                 var previous = 100
-                arr.forEach(function(t) {
+                arr.forEach(function (t) {
+                    t.date = dateParser(t.buyDate)
                     t.value = previous
-                    previous+= t.returnPercent
+                    previous += t.returnPercent
                     values.push(t.value)
                 })
             })
@@ -153,12 +165,11 @@ function createGraph() {
             var data = []
 
             d3.map(transactions).each(function (arr, key) {
-                values = []
-                arr.forEach(function (v) {
-                    values.push({date: dateParser(v.buyDate), value: v.value})
-                })
-                data.push({strategy: key,  values: values})
+                data.push({strategy: key, values: arr})
             })
+
+            console.log("debug", "data: ")
+            console.log("debug", data)
 
             var strategy = graphContainer.selectAll(".strategy")
                 .data(data)
@@ -167,18 +178,92 @@ function createGraph() {
 
             strategy.append("path")
                 .attr("class", "line")
-                .attr("d", function(d) {
+                .attr("d", function (d) {
                     return line(d.values);
                 })
-                .style("stroke", function(d) {
+                .style("stroke", function (d) {
                     return colorScale(d.strategy);
                 });
+
+            data.forEach(function (o) {
+                o.values.forEach(function (v) {
+
+                    graphContainer.append("circle")
+                        .attr('cx', function () {
+                            return x(v.date);
+                        })
+                        .attr('cy', function () {
+                            return y(v.value);
+                        })
+                        .attr('fill', function () {
+                            return colorScale(o.strategy)
+                        })
+                        .attr('r', 4)
+                        .on("click", function () {
+                            d3.event.stopPropagation();
+                            graphContainer.selectAll("circle")
+                                .transition()
+                                .attr("r", 4)
+
+                            div.transition()
+                                .duration(200)
+                                .style("opacity", .8)
+                                .style("left", (d3.event.pageX + 10) + "px")
+                                .style("top", (d3.event.pageY + 10) + "px")
+
+
+                            div.html(createToolTipContents(v))
+                            d3.select(this)
+                                .transition()
+                                .attr("r", 6);
+                        })
+                })
+            })
 
 
         } else {
             console.log("error", error)
             // showError("Fel vid hämtning", "Kunde inte hämta kategorier och parametrar.", error)
         }
+    })
+}
+
+var createLegend = function () {
+    d3.json("./api/strategies", function (error, strategies) {
+
+        var columns = 5
+        var legendWidth = width / columns
+        var legendHeight = 20
+
+        var index = 0
+
+        d3.map(strategies).each(function (description, key) {
+
+            var columnIndex = index - (Math.floor(index / columns) * columns)
+            var xTranslation = columnIndex * legendWidth
+            var yTranslation = Math.floor(index / columns) * legendHeight
+
+
+            var legendGroup = legend.append("g")
+                .classed("legendGroup", true)
+                .attr("id", "legend-" + key)
+                .attr("transform", "translate(" + xTranslation + ", " + yTranslation + ")")
+
+            legendGroup.append("circle")
+                .attr("cx", 4)
+                .attr("cy", 4)
+                .attr("r", 6)
+                .attr("fill", colorScale(key))
+
+            legendGroup.append("text")
+                .attr("x", 15)
+                .attr("y", 8)
+                .attr("color", "black")
+                .text(description)
+
+            index++
+
+        })
     })
 }
 
@@ -189,5 +274,7 @@ $(document).ready(function () {
     createTable()
 
     createGraph()
+
+    createLegend()
 
 })
