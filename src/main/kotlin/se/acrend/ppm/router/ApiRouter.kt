@@ -22,11 +22,7 @@ class ApiRouter(val apiHandler: ApiHandler) {
         ("/api" and accept(MediaType.APPLICATION_JSON)).nest {
             GET("/transactions", apiHandler::getTransactions)
 
-            GET("/strategies", { request ->
-
-                ServerResponse.ok().body(BodyInserters.fromPublisher(
-                        Flux.fromIterable(Strategy.values().asList()), Strategy::class.java))
-            })
+            GET("/strategies", apiHandler::getStrategies)
 
             GET("/selectedFunds", apiHandler::getSelectedFunds)
         }

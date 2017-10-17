@@ -1,11 +1,9 @@
 package se.acrend.ppm.handler
 
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserter
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
-import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import se.acrend.ppm.domain.SelectedFund
 import se.acrend.ppm.domain.Strategy
@@ -47,7 +45,8 @@ class ApiHandler(val transactionRepository: TransactionRepository,
 
         val fundsFlux = selectedFundRepository.findAll()
                 .sort(Comparator.comparing<SelectedFund, Int> { selectedFund ->
-                    selectedFund.strategy.sortOrder})
+                    selectedFund.strategy.sortOrder
+                })
                 .map { selected ->
                     ApiSelectedFund(selected.fund.name, selected.fund.url,
                             selected.fund.ppmNumber ?: "", selected.date,
@@ -68,6 +67,15 @@ class ApiHandler(val transactionRepository: TransactionRepository,
         return returnPercent
     }
 
+    fun getStrategies(request: ServerRequest): Mono<ServerResponse> {
 
+        val strategiesMap = mutableMapOf<String, String>()
+
+        Strategy.values().asList().forEach({ s ->
+            strategiesMap.put(s.name, s.description)
+        })
+
+        return ServerResponse.ok().body(BodyInserters.fromObject(strategiesMap))
+    }
 
 }
