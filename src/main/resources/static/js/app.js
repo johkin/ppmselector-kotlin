@@ -231,7 +231,7 @@ function createGraph() {
 var createLegend = function () {
     d3.json("./api/strategies", function (error, strategies) {
 
-        var columns = 5
+        var columns = 3
         var legendWidth = width / columns
         var legendHeight = 20
 
