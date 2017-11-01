@@ -63,13 +63,19 @@ class FundReaderService {
 
             // Hämta information från Morningstar
             val fundInfoMono: Mono<FundInfo> = when (strategy) {
-                Strategy.ThreeMonth -> createFundInfoMono(Strategy.ThreeMonth)
+                Strategy.ThreeMonthNoPrecidate -> createFundInfoMono(strategy)
+
+                Strategy.ThreeMonthOneMonthPredicate -> createFundInfoMono(strategy)
+                        .switchIfEmpty(createFundInfoMono(Strategy.OneMonth))
+
+                Strategy.ThreeMonth -> createFundInfoMono(strategy)
                         .switchIfEmpty(createFundInfoMono(Strategy.OneMonth))
                         .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
-                Strategy.OneMonth -> createFundInfoMono(Strategy.OneMonth)
-                        .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
-                Strategy.OneWeek -> createFundInfoMono(Strategy.OneWeek)
 
+                Strategy.OneMonth -> createFundInfoMono(strategy)
+                        .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
+
+                Strategy.OneWeek -> createFundInfoMono(strategy)
             }
 
             Flux.zip(selectedFundMono, fundInfoMono, BiFunction<SelectedFund, FundInfo, CompositeFund> { selected, fund ->
@@ -155,10 +161,7 @@ class FundReaderService {
             returnsInfo.fee = feesInfo.fee
             returnsInfo
         })
-                .filter({ fundInfo ->
-                    fundInfo.growthMonth >= 0 &&
-                            fundInfo.growthWeek >= 0
-                })
+                .filter(strategy::includeFund)
                 .filterWhen(pensionsMyndighetenController::existsInPensionsMyndigheten)
                 .next()
 
