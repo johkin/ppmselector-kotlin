@@ -1,7 +1,6 @@
 package se.acrend.ppm.service
 
 import org.slf4j.LoggerFactory
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
@@ -24,27 +23,15 @@ import java.util.function.BiFunction
  *
  */
 @Service
-class FundReaderService {
+class FundReaderService(val parser: MorningstarParser, val mailer: FundMailer,
+                        val pensionsMyndighetenController: PensionsMyndighetenController,
+                        val selectedFundRepository: SelectedFundRepository, val transactionRepository: TransactionRepository) {
 
     val logger = LoggerFactory.getLogger(FundReaderService::class.java)
 
     val FUND_CHANGE_DAYS = 3
 
     val client = WebClient.create()
-
-    @Autowired
-    lateinit var parser: MorningstarParser
-    @Autowired
-    lateinit var mailer: FundMailer
-
-
-    @Autowired
-    lateinit var pensionsMyndighetenController: PensionsMyndighetenController
-
-    @Autowired
-    lateinit var selectedFundRepository: SelectedFundRepository
-    @Autowired
-    lateinit var transactionRepository: TransactionRepository
 
     fun readFunds() {
 
@@ -63,8 +50,6 @@ class FundReaderService {
 
             // Hämta information från Morningstar
             val fundInfoMono: Mono<FundInfo> = when (strategy) {
-                Strategy.ThreeMonthNoPrecidate -> createFundInfoMono(strategy)
-
                 Strategy.ThreeMonthOneMonthPredicate -> createFundInfoMono(strategy)
                         .switchIfEmpty(createFundInfoMono(Strategy.OneMonth))
 
@@ -75,7 +60,7 @@ class FundReaderService {
                 Strategy.OneMonth -> createFundInfoMono(strategy)
                         .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
 
-                Strategy.OneWeek -> createFundInfoMono(strategy)
+                else -> createFundInfoMono(strategy)
             }
 
             Flux.zip(selectedFundMono, fundInfoMono, BiFunction<SelectedFund, FundInfo, CompositeFund> { selected, fund ->
