@@ -18,13 +18,13 @@ class CronRouter(val fundReaderService: FundReaderService) {
     fun cronRoutes() = router {
 
         (accept(MediaType.TEXT_PLAIN) and "/cron").nest {
-            GET("/readFunds", { request ->
+            GET("/readFunds", { _ ->
 
                 fundReaderService.readFunds()
 
                 ServerResponse.ok().body(BodyInserters.fromObject("Reading funds"))
             })
-            GET("/updatePrice", { request ->
+            GET("/updatePrice", { _ ->
 
                 fundReaderService.updatePrice()
 

@@ -13,13 +13,12 @@ import java.net.URI
  *
  */
 @Configuration
-class WebRouter(val fundReaderService: FundReaderService,
-                val apiHandler: ApiHandler) {
+class WebRouter {
 
     @Bean
     fun webRoutes() = router {
 
-        ("/" and accept(TEXT_HTML)).invoke { request ->
+        ("/" and accept(TEXT_HTML)).invoke { _ ->
             ServerResponse.permanentRedirect(URI.create("/index.html")).build()
         }
 
