@@ -24,7 +24,6 @@ class FundMailer(val engine: RythmEngine, val environment: Environment) {
     fun sendMail(subject: String, contents: String): Mono<Boolean> {
 
         val key = environment.getProperty("sendgrid.api.key")
-        logger.info("Sendgrid key $key")
 
         val sendGrid = SendGrid(key)
 
