@@ -56,34 +56,3 @@ version = '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
-
-task copyJar(type: Copy, dependsOn: bootJar) {
-    from "$buildDir/libs"
-    include "*.jar"
-    into "$buildDir/docker"
-    rename { filename -> "app.jar"}
-}
-
-task buildImage(type: Exec, dependsOn: copyJar, group: "docker") {
-
-    inputs.files "$buildDir/docker/app.jar", "Dockerfile"
-
-    workingDir "$projectDir"
-
-    commandLine "docker", "build",  "-t", "johkin/ppmselector", "."
-}
-
-task login(type: Exec, dependsOn: buildImage, group: "docker") {
-
-    println System.env.DOCKER_USERNAME
-
-    workingDir "$projectDir"
-
-//    commandLine "docker", "login", "-u=${System.env.DOCKER_USERNAME}", "-p=${System.env.DOCKER_PASSWORD}"
-}
-task publishImage(type: Exec, dependsOn: [buildImage,login], group: "docker") {
-
-    workingDir "$projectDir"
-
-    commandLine "docker", "push", "johkin/ppmselector"
-}
