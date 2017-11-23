@@ -1,4 +1,4 @@
-var margin = {top: 20, right: 50, bottom: 90, left: 50};
+var margin = {top: 20, right: 50, bottom: 100, left: 50};
 var width = 960 - margin.left - margin.right;
 var height = 590 - margin.top - margin.bottom;
 
@@ -8,6 +8,8 @@ var formatDate = d3.timeFormat("%Y-%m-%d");
 var legend = null
 
 var svg = d3.select("#graph")
+
+var strategiesMap = null;
 
 var initGraph = function () {
 
@@ -125,18 +127,24 @@ var line = d3.line()
         return y(d.value);
     });
 
-var createToolTipContents = function (value) {
+var createToolTipContents = function (fundEvent, strategy) {
 
-    var contents = "Datum: " + formatDate(new Date(value.buyDate)) + "<br/>"
-    contents += "<b>Fond: " + value.fundName + "</b><br>"
-    contents += "<b>Utveckling: " + value.returnPercent + "%</b>"
+    var accReturn = fundEvent.value - 100
 
+    var contents = "<b>Fond: " + fundEvent.fundName + "</b><br>"
+    contents += "<b>Köpdatum: " + formatDate(new Date(fundEvent.buyDate)) + "</b><br/>"
+    contents += "<b>Köppris: " + fundEvent.buyPrice+ "</b><br>"
+    contents += "<b>Säljdatum: " + formatDate(new Date(fundEvent.sellDate)) + "</b><br/>"
+    contents += "<b>Säljpris: " + fundEvent.sellPrice+ "</b><br>"
+    contents += "<b>Utveckling: " + fundEvent.returnPercent + "%</b><br>"
+    contents += "<b>Ack utveckling: " + accReturn + "%</b><br>"
+    contents += "<b>Ppm-nummer: " + fundEvent.ppmNumber + "</b><br>"
+    contents += "<b>Strategi: " + strategiesMap.get(strategy)  + "</b>"
 
     return contents
 }
 
 var div = d3.select("#tooltip");
-
 
 function createGraph() {
     d3.json("./api/transactions", function (error, transactions) {
@@ -174,7 +182,10 @@ function createGraph() {
             var strategy = graphContainer.selectAll(".strategy")
                 .data(data)
                 .enter().append("g")
-                .attr("class", "strategy");
+                .attr("class", "strategy")
+                .attr("id", function(d) {
+                    return d.strategy
+                })
 
             strategy.append("path")
                 .attr("class", "line")
@@ -199,11 +210,10 @@ function createGraph() {
                             return colorScale(o.strategy)
                         })
                         .attr('r', 4)
-                        .on("click", function () {
+                        .on("mouseover", function () {
                             d3.event.stopPropagation();
-                            graphContainer.selectAll("circle")
-                                .transition()
-                                .attr("r", 4)
+
+                            div.html(createToolTipContents(v, o.strategy))
 
                             div.transition()
                                 .duration(200)
@@ -211,11 +221,20 @@ function createGraph() {
                                 .style("left", (d3.event.pageX + 10) + "px")
                                 .style("top", (d3.event.pageY + 10) + "px")
 
-
-                            div.html(createToolTipContents(v))
                             d3.select(this)
                                 .transition()
                                 .attr("r", 6);
+                        })
+                        .on("mouseout", function () {
+                            d3.event.stopPropagation();
+
+                            div.transition()
+                                .duration(200)
+                                .style("opacity", 0)
+
+                            graphContainer.selectAll("circle")
+                                .transition()
+                                .attr("r", 4)
                         })
                 })
             })
@@ -237,7 +256,8 @@ var createLegend = function () {
 
         var index = 0
 
-        d3.map(strategies).each(function (description, key) {
+        strategiesMap = d3.map(strategies);
+        strategiesMap.each(function (description, key) {
 
             var columnIndex = index - (Math.floor(index / columns) * columns)
             var xTranslation = columnIndex * legendWidth
@@ -248,6 +268,7 @@ var createLegend = function () {
                 .classed("legendGroup", true)
                 .attr("id", "legend-" + key)
                 .attr("transform", "translate(" + xTranslation + ", " + yTranslation + ")")
+                .attr("cursor", "hand")
 
             legendGroup.append("circle")
                 .attr("cx", 4)
@@ -260,6 +281,17 @@ var createLegend = function () {
                 .attr("y", 8)
                 .attr("color", "black")
                 .text(description)
+
+            legendGroup.on("mouseover", function () {
+                d3.event.stopPropagation();
+
+                d3.select("#" + key + " path.line").transition().style("stroke-width", "5")
+            })
+            legendGroup.on("mouseout", function () {
+                d3.event.stopPropagation();
+
+                d3.selectAll(".strategy path.line").transition().style("stroke-width")
+            })
 
             index++
 
