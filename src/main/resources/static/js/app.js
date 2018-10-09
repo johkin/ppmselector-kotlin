@@ -149,8 +149,8 @@ var div = d3.select("#tooltip");
 function createGraph() {
     d3.json("./api/transactions", function (error, transactions) {
         if (!error) {
-            console.log("debug", "transactions: ")
-            console.log("debug", transactions)
+
+
 
             createXAxis(transactions);
 
@@ -175,9 +175,6 @@ function createGraph() {
             d3.map(transactions).each(function (arr, key) {
                 data.push({strategy: key, values: arr})
             })
-
-            console.log("debug", "data: ")
-            console.log("debug", data)
 
             var strategy = graphContainer.selectAll(".strategy")
                 .data(data)

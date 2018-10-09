@@ -19,7 +19,7 @@ import java.util.HashMap
 
 
 @SpringBootApplication(scanBasePackages = arrayOf("se.acrend.ppm"))
-@Import(value = MongoConfig::class)
+@Import(value = [MongoConfig::class])
 @Configuration
 class PpmselectorKotlinApplication  {
 

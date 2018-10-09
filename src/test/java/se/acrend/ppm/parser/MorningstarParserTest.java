@@ -1,5 +1,6 @@
 package se.acrend.ppm.parser;
 
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -9,7 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 
 /**
  *
@@ -37,7 +39,7 @@ public class MorningstarParserTest {
         assertEquals("22/6", fund.getDate());
         assertEquals("C WorldWide Medical Small & Mid Cap 1A", fund.getName());
         assertEquals("http://www.morningstar.se/Funds/Quicktake/Overview.aspx?perfid=0P0000YRMG&programid=0000000000", fund.getUrl());
-        assertEquals("1,0", fund.getGrowthDay());
+        assertEquals("1.0", fund.getGrowthDay());
         assertEquals("10,1", fund.getGrowthWeek());
         assertEquals("16,0", fund.getGrowthMonth());
         assertEquals("12,2", fund.getGrowth3Month());

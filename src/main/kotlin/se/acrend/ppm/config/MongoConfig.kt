@@ -28,6 +28,7 @@ class MongoConfig(val environment: Environment) : AbstractReactiveMongoConfigura
     }
 
     override fun getDatabaseName(): String {
-        return "heroku_gtpjl1qw"
+//        return "heroku_gtpjl1qw"
+        return environment.getProperty("MONGODB_NAME")
     }
 }

@@ -1,5 +1,6 @@
 package se.acrend.ppm.handler
 
+import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.ServerRequest
@@ -12,7 +13,8 @@ import se.acrend.ppm.domain.api.ApiSelectedFund
 import se.acrend.ppm.domain.api.ApiTransaction
 import se.acrend.ppm.repository.SelectedFundRepository
 import se.acrend.ppm.repository.TransactionRepository
-import java.util.stream.Collectors
+import java.util.function.Function
+import java.util.stream.Collectors.*
 
 /**
  *
@@ -24,20 +26,22 @@ class ApiHandler(val transactionRepository: TransactionRepository,
     fun getTransactions(request: ServerRequest): Mono<ServerResponse> {
 
         val apiTransactionMono = transactionRepository.findAll()
-                .toStream()
-                .sorted(Comparator.comparing(Transaction::buyDate))
-                .collect(Collectors.groupingBy<Transaction, Strategy> { transation -> transation.strategy })
-                .mapValues { entry ->
-                    entry.value
-                            .map { transaction ->
-                                ApiTransaction(transaction.fund.name, transaction.fund.ppmNumber,
-                                        transaction.buyDate, transaction.buyPrice,
-                                        transaction.sellDate, transaction.sellPrice,
-                                        calculateReturn(transaction))
-                            }
-                }
+                .sort(Comparator.comparing(Transaction::buyDate))
+                .collect(groupingBy(
 
-        return ServerResponse.ok().body(BodyInserters.fromObject(apiTransactionMono))
+                        Function<Transaction, Strategy> { transaction -> transaction.strategy },
+                        mapping(
+                                Function<Transaction, ApiTransaction> { transaction: Transaction ->
+                                    ApiTransaction(transaction.fund.name, transaction.fund.ppmNumber,
+                                            transaction.buyDate, transaction.buyPrice,
+                                            transaction.sellDate, transaction.sellPrice,
+                                            calculateReturn(transaction)) },
+                                        toList<ApiTransaction>())))
+
+        class TransactionMapType : ParameterizedTypeReference<Map<Strategy, List<ApiTransaction>>>()
+
+        return ServerResponse.ok().body(BodyInserters.fromPublisher(apiTransactionMono,
+                TransactionMapType()))
     }
 
 
