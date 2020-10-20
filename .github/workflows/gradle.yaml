@@ -12,7 +12,7 @@ on:
 env:
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_REF: ${{ github.ref }}
-  REGISTRY_HOSTNAME: eu.gcr.io
+  REGISTRY_HOSTNAME: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}
   IMAGE: ppmselector
 
 jobs:
@@ -37,7 +37,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew bootBuildImage --imageName=$REGISTRY_HOSTNAME/${{ secrets.GCP_PROJECT_ID }}/$IMAGE:${{ github.sha }}
+        run: ./gradlew bootBuildImage --imageName=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }}
 
       # Setup gcloud CLI
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
