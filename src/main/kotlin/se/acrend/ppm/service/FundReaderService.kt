@@ -214,9 +214,5 @@ fun LocalDate.plusWeekDays(weekDays: Int): LocalDate {
 }
 
 class CompositeFund(val selected: SelectedFund, val fund: FundInfo) {
-    fun isFundEqual() = if (selected != null && fund != null) {
-        selected.fund.name.contentEquals(fund.name)
-    } else {
-        false
-    }
+    fun isFundEqual() = selected.fund.name.contentEquals(fund.name)
 }

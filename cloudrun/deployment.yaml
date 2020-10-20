@@ -1,0 +1,39 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  labels:
+    cloud.googleapis.com/location: europe-west1
+spec:
+  template:
+    metadata:
+      name: ppmselector
+      annotations:
+        run.googleapis.com/client-name: cloud-console
+        autoscaling.knative.dev/maxScale: '2'
+    spec:
+      containerConcurrency: 50
+      timeoutSeconds: 300
+      serviceAccountName: cloud-runner@ppmselector-293109.iam.gserviceaccount.com
+      containers:
+        - image: eu.gcr.io/ppmselector-293109/ppmselector:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: spring.data.mongodb.uri
+              value: sm://mongo-uri
+            - name: spring.data.mongodb.authentication-database
+              value: ppm
+          resources:
+            limits:
+              cpu: 1000m
+              memory: 512Mi
+          readinessProbe:
+            httpGet: /actuator/health/rediness
+            initialDelaySeconds: 30
+          livenessProbe:
+            httpGet: /actuator/health/liveness
+            initialDelaySeconds: 30
+
+  traffic:
+    - percent: 100
+      latestRevision: true

@@ -1,0 +1,7 @@
+
+spring:
+  data:
+    mongodb:
+      uri: sm://mongo-uri
+      authentication-database: ppm
+

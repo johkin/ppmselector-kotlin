@@ -14,3 +14,9 @@ spring:
   jackson:
     serialization:
       write_dates_as_timestamps: false
+
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
