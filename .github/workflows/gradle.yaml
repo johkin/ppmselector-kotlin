@@ -12,7 +12,7 @@ on:
 env:
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_REF: ${{ github.ref }}
-  REGISTRY_HOSTNAME: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}
+  REGISTRY_HOSTNAME: eu.gcr.io/ppmselector-293109
   IMAGE: ppmselector
 
 jobs:
