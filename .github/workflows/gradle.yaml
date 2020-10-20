@@ -9,6 +9,12 @@ on:
   pull_request:
     branches: [ master ]
 
+env:
+  GITHUB_SHA: ${{ github.sha }}
+  GITHUB_REF: ${{ github.ref }}
+  REGISTRY_HOSTNAME: eu.gcr.io
+  IMAGE: ppmselector
+
 jobs:
   build:
 
@@ -28,7 +34,26 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle.kts') }}
           restore-keys: ${{ runner.os }}-gradle-
       - name: Build with Gradle
-        run: ./gradlew bootBuildImage --imageName=gcr.io/${{ secrets.GCP_PROJECT_ID }}/ppmselector
+        run: ./gradlew bootBuildImage --imageName=$REGISTRY_HOSTNAME/${{ secrets.GCP_PROJECT_ID }}/$IMAGE:${{ github.sha }}
+
+      # Setup gcloud CLI
+      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+        with:
+          version: '314.0.0'
+          service_account_key: ${{ secrets.GCP_SA }}
+
+      # Configure docker to use the gcloud command-line tool as a credential helper
+      - run: |
+          # Set up docker to authenticate
+          # via gcloud command-line tool.
+          gcloud auth configure-docker
+
+      # Push the Docker image to Google Container Registry
+      - name: Publish
+        run: |
+          docker push "$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }}
+          docker tag "$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} "$REGISTRY_HOSTNAME"/"$IMAGE":latest
+          docker push "$REGISTRY_HOSTNAME"/"$IMAGE":latest
