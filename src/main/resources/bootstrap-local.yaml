@@ -1,0 +1,9 @@
+spring:
+  cloud:
+    gcp:
+      sql:
+        enabled: false
+      trace:
+        enabled: false
+      storage:
+        enabled: false

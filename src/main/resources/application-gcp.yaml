@@ -5,3 +5,13 @@ spring:
       uri: ${sm://mongo-uri}
       authentication-database: ppm
 
+logging:
+  level:
+    se:
+      acrend:
+        ppm: debug
+
+    org:
+      springframework: debug
+      mongodb: debug
+    reactor: debug

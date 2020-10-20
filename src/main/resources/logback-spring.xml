@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration debug="false" scan="false" scanPeriod="60 seconds">
+
+  <contextName>ppmselector</contextName>
+
+  <springProfile name="local">
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+      <encoder>
+        <pattern>%d [%thread] %-5level %logger{36} %X{sourceThread} - %msg%n</pattern>
+      </encoder>
+    </appender>
+
+    <root level="INFO">
+      <appender-ref ref="CONSOLE" />
+    </root>
+
+  </springProfile>
+
+
+  <springProfile name="gcp">
+
+    <include resource="org/springframework/cloud/gcp/autoconfigure/logging/logback-json-appender.xml" />
+    
+    <root level="INFO">
+      <appender-ref ref="CONSOLE_JSON" />
+    </root>
+
+  </springProfile>
+
+</configuration>
+
