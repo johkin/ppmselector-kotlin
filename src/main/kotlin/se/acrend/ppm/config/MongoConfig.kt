@@ -12,23 +12,23 @@ import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 import se.acrend.ppm.repository.TransactionRepository
 
-@Configuration
-@EnableReactiveMongoRepositories(basePackageClasses = arrayOf(TransactionRepository::class))
-class MongoConfig(val environment: Environment) : AbstractReactiveMongoConfiguration() {
-
-    @Bean
-    fun mongoEventListener(): LoggingEventListener {
-        return LoggingEventListener()
-    }
-
-    @Bean
-    override fun reactiveMongoClient(): MongoClient {
-        val uri = environment.getProperty("MONGODB_URI")
-        return MongoClients.create(uri)
-    }
-
-    override fun getDatabaseName(): String {
-//        return "heroku_gtpjl1qw"
-        return environment.getProperty("MONGODB_NAME")
-    }
-}
+//@Configuration
+//@EnableReactiveMongoRepositories(basePackageClasses = arrayOf(TransactionRepository::class))
+//class MongoConfig(val environment: Environment) : AbstractReactiveMongoConfiguration() {
+//
+//    @Bean
+//    fun mongoEventListener(): LoggingEventListener {
+//        return LoggingEventListener()
+//    }
+////
+////    @Bean
+////    override fun reactiveMongoClient(): MongoClient {
+////        val uri = environment.getProperty("MONGODB_URI")
+////        return MongoClients.create(uri)
+////    }
+////
+////    override fun getDatabaseName(): String {
+//////        return "heroku_gtpjl1qw"
+////        return environment.getProperty("MONGODB_NAME")!!
+////    }
+//}

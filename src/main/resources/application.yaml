@@ -1,0 +1,16 @@
+logging:
+  level:
+    se:
+      acrend:
+        ppm: debug
+
+    org:
+      springframework: warn
+      mongodb: warn
+    reactor: warn
+
+
+spring:
+  jackson:
+    serialization:
+      write_dates_as_timestamps: false

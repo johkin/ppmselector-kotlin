@@ -1,49 +1,39 @@
-package se.acrend.ppm.mail;
+package se.acrend.ppm.mail
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.mockito.Mockito;
-import org.rythmengine.RythmEngine;
-import org.springframework.core.env.Environment;
-import se.acrend.ppm.domain.FundInfo;
-import se.acrend.ppm.domain.Strategy;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.mockito.Mockito
+import org.rythmengine.RythmEngine
+import org.springframework.core.env.Environment
+import se.acrend.ppm.domain.FundInfo
+import se.acrend.ppm.domain.Strategy.OneMonth
+import java.util.ArrayList
 
 /**
  *
  */
-public class FundMailerTest {
+class FundMailerTest {
+    private var mailer: FundMailer? = null
 
-    private FundMailer mailer;
-
-    @Before
-    public void setUp() throws Exception {
-
-        Environment environment = Mockito.mock(Environment.class);
-
-        mailer = new FundMailer(new RythmEngine(), environment);
+    @BeforeEach
+    @Throws(Exception::class)
+    fun setUp() {
+        val environment = Mockito.mock(
+            Environment::class.java
+        )
+        mailer = FundMailer(RythmEngine(), environment)
     }
 
     @Test
-    @Ignore
-    public void createHtmlMessage() throws Exception {
-
-        List<FundInfo> funds = new ArrayList<>();
-
-        FundInfo fund = new FundInfo("Fond 1", "url-1");
-        fund.setPpmNumber("123456");
-        funds.add(fund);
-
-        String message = mailer.createHtmlMessage(fund, Strategy.OneMonth).block();
-
-        System.out.println(message);
-
+    @Disabled
+    @Throws(Exception::class)
+    fun createHtmlMessage() {
+        val funds: MutableList<FundInfo> = ArrayList()
+        val fund = FundInfo("Fond 1", "url-1")
+        fund.ppmNumber = "123456"
+        funds.add(fund)
+        val message = mailer!!.createHtmlMessage(fund, OneMonth).block()
+        println(message)
     }
-
-
 }

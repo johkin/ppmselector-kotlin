@@ -1,0 +1,7 @@
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb://ppm:ppm@localhost:27017/admin
+      authentication-database: admin
+
