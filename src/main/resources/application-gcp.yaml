@@ -12,6 +12,6 @@ logging:
         ppm: debug
 
     org:
-      springframework: debug
-      mongodb: debug
-    reactor: debug
+      springframework: info
+      mongodb: warn
+    reactor: warn
