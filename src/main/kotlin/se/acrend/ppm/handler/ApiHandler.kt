@@ -63,6 +63,17 @@ class ApiHandler(
         )
     }
 
+    fun SelectedFund.toApi(): ApiSelectedFund {
+        return ApiSelectedFund(
+            fundName = fund.name,
+            uri = "https://www.morningstar.se/se/funds/snapshot/snapshot.aspx?id=${fund.secId}",
+            ppmNumber = fund.ppmNumber ?: "",
+            selectedDate = date,
+            strategy = strategy,
+            strategyDesc = strategy.description
+        )
+    }
+
     fun getSelectedFunds(request: ServerRequest): Mono<ServerResponse> {
 
         val fundsFlux = selectedFundRepository.findAll()
@@ -70,11 +81,7 @@ class ApiHandler(
                 selectedFund.strategy.sortOrder
             })
             .map { selected ->
-                ApiSelectedFund(
-                    selected.fund.name, "",
-                    selected.fund.ppmNumber ?: "", selected.date,
-                    selected.strategy, selected.strategy.description
-                )
+                selected.toApi()
             }
 
         return ServerResponse.ok().body(BodyInserters.fromPublisher(fundsFlux, ApiSelectedFund::class.java))

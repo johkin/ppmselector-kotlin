@@ -18,7 +18,8 @@ data class FundInfo(
     var growth3Month: Float = 0f,
     var growth6Month: Float = 0f,
     var growthYear: Float = 0f,
-    var date: String? = null
+    var date: String? = null,
+    var secId: String? = null
 )
 
 @Document

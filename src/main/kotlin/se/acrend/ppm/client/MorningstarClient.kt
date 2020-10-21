@@ -17,7 +17,7 @@ class MorningstarClient(val webClient: WebClient) {
     fun getFundList(strategy: Strategy, term: String = ""): Mono<List<Fund>> {
 
         val builder =
-            UriComponentsBuilder.fromHttpUrl("http://lt.morningstar.com/api/rest.svc/klr5zyak8x/security/screener")
+            UriComponentsBuilder.fromHttpUrl("https://lt.morningstar.com/api/rest.svc/klr5zyak8x/security/screener")
         builder.queryParam("page", "1")
         builder.queryParam("pageSize", "5")
         builder.queryParam("sortOrder", strategy.parameterName)

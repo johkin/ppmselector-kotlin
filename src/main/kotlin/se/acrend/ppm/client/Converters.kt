@@ -15,6 +15,7 @@ fun Fund.toDocument(): FundInfo {
         growthMonth = ReturnM1,
         growth3Month = ReturnM3,
         growth6Month = ReturnM6,
-        growthYear = ReturnM12
+        growthYear = ReturnM12,
+        secId = SecId
     )
 }
