@@ -116,7 +116,7 @@ class FundReaderService(
                 buyPrice = null, sellDate = null, sellPrice = null, returnPercent = null
             )
         )
-            .flatMap { newTransaction ->
+            .flatMap {
                 transactionRepository.findByFundNameAndStrategyAndSellDateNull(
                     composite.selected.fund.name,
                     composite.selected.strategy

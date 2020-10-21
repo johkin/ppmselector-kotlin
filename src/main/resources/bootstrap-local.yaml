@@ -1,9 +1,22 @@
 spring:
   cloud:
     gcp:
-      sql:
+      logging:
         enabled: false
       trace:
         enabled: false
       storage:
+        enabled: false
+      secretmanager:
+        enabled: false
+      config:
+        enabled: false
+      core:
+        enabled: false
+      metrics:
+        enabled: false
+management:
+  metrics:
+    export:
+      stackdriver:
         enabled: false

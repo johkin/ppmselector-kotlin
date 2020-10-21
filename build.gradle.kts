@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-logging")
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-secretmanager")
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-metrics")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-trace")
 
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

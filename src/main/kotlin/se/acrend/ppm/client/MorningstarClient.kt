@@ -38,7 +38,6 @@ class MorningstarClient(val webClient: WebClient) {
             .uri(builder.build().toUri())
             .retrieve()
             .bodyToMono(FundsResponse::class.java)
-            .timeout(ofSeconds(5))
             .map { response -> response.rows }
 
 
