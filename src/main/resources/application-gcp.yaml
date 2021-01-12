@@ -5,6 +5,9 @@ spring:
       uri: ${sm://mongo-uri}
       authentication-database: ppm
 
+server:
+  port: ${PORT:8080}
+
 logging:
   level:
     se:
