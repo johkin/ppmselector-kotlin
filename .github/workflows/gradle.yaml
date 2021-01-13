@@ -39,20 +39,20 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew bootBuildImage --imageName=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }}
 
-      # Setup gcloud CLI
-      - uses: GoogleCloudPlatform/github-actions/setup-gcloud@master
+      - name: Setup gcloud CLI
+        uses: google-github-actions/setup-gcloud@master
         with:
-          version: '314.0.0'
           service_account_key: ${{ secrets.GCP_SA }}
+          export_default_credentials: true
 
-      # Configure docker to use the gcloud command-line tool as a credential helper
-      - run: |
+      - name: Setup docker authentication
+        run: |
           # Set up docker to authenticate
           # via gcloud command-line tool.
           gcloud auth configure-docker
 
       # Push the Docker image to Google Container Registry
-      - name: Publish
+      - name: Publish image
         run: |
           docker push "$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }}
           docker tag "$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} "$REGISTRY_HOSTNAME"/"$IMAGE":latest
