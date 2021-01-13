@@ -11,6 +11,8 @@ logging:
 
 
 spring:
+  main:
+    lazy-initialization: true
   jackson:
     serialization:
       write_dates_as_timestamps: false

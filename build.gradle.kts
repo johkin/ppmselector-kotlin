@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-	id("org.springframework.boot") version "2.4.1"
+	id("org.springframework.boot") version "2.3.4.RELEASE"
 	kotlin("jvm") version "1.4.0"
 	kotlin("plugin.spring") version "1.4.0"
 }
@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.1"))
-	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.0"))
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE"))
+	implementation(platform("org.springframework.cloud:spring-cloud-gcp-dependencies:1.2.5.RELEASE"))
 
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -25,10 +25,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-	implementation("com.google.cloud:spring-cloud-gcp-starter-logging")
-	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager")
-	implementation("com.google.cloud:spring-cloud-gcp-starter-metrics")
-	implementation("com.google.cloud:spring-cloud-gcp-starter-trace")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-logging")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-secretmanager")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-metrics")
+	//implementation("org.springframework.cloud:spring-cloud-gcp-starter-trace")
 
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
