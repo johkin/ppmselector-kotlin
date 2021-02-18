@@ -25,9 +25,15 @@ class AppConfig {
 
         val tcpClient = TcpClient.create()
             .secure { sslProviderBuilder -> sslProviderBuilder.sslContext(sslContext) }
-        val httpClient = HttpClient.from(tcpClient).responseTimeout(Duration.ofSeconds(30))
+        val httpClient = HttpClient.from(tcpClient)
+            .responseTimeout(Duration.ofSeconds(30))
+            .observe { connection, newState ->
+            println(newState)
+            println(connection)
+        }
 
-        return WebClient.builder().clientConnector(ReactorClientHttpConnector(httpClient)).build()
+        return webClientBuilder.clientConnector(ReactorClientHttpConnector(httpClient)).build()
+        //return webClientBuilder.build()
     }
 
 }
