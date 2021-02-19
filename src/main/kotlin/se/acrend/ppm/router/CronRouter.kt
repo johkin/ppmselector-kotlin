@@ -22,11 +22,15 @@ class CronRouter(val fundReaderService: FundReaderService) {
 
                 fundReaderService.readFunds()
 
+                Thread.sleep(20000)
+
                 ok().body(fromValue("Reading funds"))
             }
             GET("/updatePrice", { _ ->
 
                 fundReaderService.updatePrice()
+
+                Thread.sleep(20000)
 
                 ok().body(fromValue("Updating price"))
             })

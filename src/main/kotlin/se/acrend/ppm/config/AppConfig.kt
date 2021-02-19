@@ -21,7 +21,7 @@ class AppConfig {
 
     @Bean
     fun webClient(webClientBuilder: WebClient.Builder): WebClient {
-
+        /*
         val sslContext = SslContextBuilder
             .forClient()
             .trustManager(InsecureTrustManagerFactory.INSTANCE)
@@ -41,7 +41,8 @@ class AppConfig {
         }
 
         return webClientBuilder.clientConnector(ReactorClientHttpConnector(httpClient)).build()
-        //return webClientBuilder.build()
+        */
+        return webClientBuilder.build()
     }
 
 }
