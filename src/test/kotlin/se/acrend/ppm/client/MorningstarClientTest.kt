@@ -1,5 +1,6 @@
 package se.acrend.ppm.client
 
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,6 +28,7 @@ class MorningstarClientTest {
     val logger = LoggerFactory.getLogger(MorningstarClientTest::class.java)
 
     @Test
+    @Disabled
     fun getFundList() {
 
         val list = client.getFundList(OneMonth).block()
@@ -34,7 +36,9 @@ class MorningstarClientTest {
         println(list)
 
     }
+
     @Test
+    @Disabled
     fun getFundListParallell() {
 
 
