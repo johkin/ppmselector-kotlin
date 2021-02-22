@@ -1,6 +1,7 @@
 package se.acrend.ppm.domain
 
 import org.springframework.data.annotation.Id
+import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import org.springframework.data.mongodb.core.mapping.Field
 import java.time.LocalDate
@@ -26,7 +27,9 @@ data class FundInfo(
 data class Transaction(
     @Id val id: String?, val fund: FundInfo,
     val strategy: Strategy,
+    @Indexed
     val buyDate: LocalDate, val buyPrice: Float?,
+    @Indexed(sparse = true)
     val sellDate: LocalDate?, val sellPrice: Float?,
     val returnPercent: Float?
 )
@@ -36,6 +39,7 @@ data class SelectedFund(
     @Id val id: String?,
     val fund: FundInfo,
     val date: LocalDate,
+    @Indexed
     val strategy: Strategy
 )
 
