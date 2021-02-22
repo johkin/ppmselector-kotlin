@@ -3,8 +3,7 @@ package se.acrend.ppm.router
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.MediaType
-import org.springframework.web.reactive.function.BodyInserters.fromValue
-import org.springframework.web.reactive.function.server.ServerResponse.ok
+import org.springframework.web.reactive.function.server.body
 import org.springframework.web.reactive.function.server.router
 import se.acrend.ppm.service.FundReaderService
 
@@ -20,19 +19,16 @@ class CronRouter(val fundReaderService: FundReaderService) {
         (accept(MediaType.TEXT_PLAIN) and "/cron").nest {
             GET("/readFunds") { _ ->
 
-                fundReaderService.readFunds()
+                val funds = fundReaderService.readFunds()
 
-                Thread.sleep(20000)
-
-                ok().body(fromValue("Reading funds"))
+                ok().body(funds)
             }
             GET("/updatePrice", { _ ->
 
-                fundReaderService.updatePrice()
+                val prices = fundReaderService.updatePrice()
 
-                Thread.sleep(20000)
 
-                ok().body(fromValue("Updating price"))
+                ok().body(prices)
             })
         }
 

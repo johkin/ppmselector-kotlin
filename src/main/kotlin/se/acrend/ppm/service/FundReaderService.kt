@@ -4,6 +4,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import reactor.kotlin.core.publisher.toFlux
 import se.acrend.ppm.client.MorningstarClient
 import se.acrend.ppm.client.toDocument
 import se.acrend.ppm.domain.FundInfo
@@ -16,7 +17,6 @@ import se.acrend.ppm.repository.SelectedFundRepository
 import se.acrend.ppm.repository.TransactionRepository
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.util.function.BiFunction
 
 /**
  *
@@ -34,77 +34,70 @@ class FundReaderService(
 
     val FUND_CHANGE_DAYS = 3
 
-    fun readFunds() {
+    fun readFunds(): Flux<Pair<Strategy, FundInfo>> {
 
-//        val strategy = Strategy.ThreeMonth
-        for (strategy in Strategy.values()) {
-
-            logger.info("Läser fonder för strategi ${strategy.description}")
+        return Strategy.values().toFlux()
+            .flatMap { strategy ->
 
 
-            // Hämta den lagrade fonden från databasen,
-            // om det inte finns någon tidigare lagrad, lagra en dummy-post
-            val selectedFundMono: Mono<SelectedFund> = selectedFundRepository.findByStrategy(strategy)
-                .switchIfEmpty(
-                    selectedFundRepository.save(
-                        SelectedFund(null, FundInfo("Dummy Fund", ""), LocalDate.now(), strategy)
+                logger.info("Läser fonder för strategi ${strategy.description}")
+
+
+                // Hämta den lagrade fonden från databasen,
+                // om det inte finns någon tidigare lagrad, lagra en dummy-post
+                val selectedFundMono: Mono<SelectedFund> = selectedFundRepository.findByStrategy(strategy)
+                    .switchIfEmpty(
+                        selectedFundRepository.save(
+                            SelectedFund(null, FundInfo("Dummy Fund", ""), LocalDate.now(), strategy)
+                        )
                     )
-                )
 
-            // Hämta information från Morningstar
-            val fundInfoMono: Mono<FundInfo> = when (strategy) {
-                Strategy.ThreeMonthOneMonthPredicate -> createFundInfoMono(strategy)
-                    .switchIfEmpty(createFundInfoMono(Strategy.OneMonth))
+                // Hämta information från Morningstar
+                val fundInfoMono: Mono<FundInfo> = when (strategy) {
+                    Strategy.ThreeMonthOneMonthPredicate -> readFundFromMorningstar(strategy)
+                        .switchIfEmpty(readFundFromMorningstar(Strategy.OneMonth))
 
-                Strategy.ThreeMonth -> createFundInfoMono(strategy)
-                    .switchIfEmpty(createFundInfoMono(Strategy.OneMonth))
-                    .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
+                    Strategy.ThreeMonth -> readFundFromMorningstar(strategy)
+                        .switchIfEmpty(readFundFromMorningstar(Strategy.OneMonth))
+                        .switchIfEmpty(readFundFromMorningstar(Strategy.OneWeek))
 
-                Strategy.OneMonth -> createFundInfoMono(strategy)
-                    .switchIfEmpty(createFundInfoMono(Strategy.OneWeek))
+                    Strategy.OneMonth -> readFundFromMorningstar(strategy)
+                        .switchIfEmpty(readFundFromMorningstar(Strategy.OneWeek))
 
-                else -> createFundInfoMono(strategy)
-            }
+                    else -> readFundFromMorningstar(strategy)
+                }
 
-            Flux.zip(
-                selectedFundMono,
-                fundInfoMono,
-                BiFunction<SelectedFund, FundInfo, CompositeFund> { selected, fund ->
+                val strategyFund = selectedFundMono.zipWith(fundInfoMono) { selected, fund ->
                     CompositeFund(selected, fund)
-                })
-                .next()
-                .flatMap { composite ->
-                    if (composite.isFundEqual()) {
-                        logger.info("För strategi ${strategy.description} är det samma fond: ${composite.fund.name}, avslutar.")
+                }
+                    .flatMap { composite ->
+                        if (composite.isFundEqual()) {
+                            logger.info("För strategi ${strategy.description} är det samma fond: ${composite.fund.name}, avslutar.")
 
-                        Mono.empty<SelectedFund>()
-                    } else {
+                            Mono.empty()
+                        } else {
 
-                        logger.info("För strategi ${strategy.description} är det ny fond: ${composite.fund.name}.")
+                            logger.info("För strategi ${strategy.description} är det ny fond: ${composite.fund.name}.")
 
-                        updateTransactionInfo(composite)
+                            updateTransactionInfo(composite)
 
-                        val newSelected = composite.selected.copy(fund = composite.fund, date = LocalDate.now())
+                            val newSelected = composite.selected.copy(fund = composite.fund, date = LocalDate.now())
 
-                        selectedFundRepository.save(newSelected)
+                            selectedFundRepository.save(newSelected)
+                        }
                     }
-                }
-                .flatMap { selectedFund ->
-                    logger.info("Skapar meddelande för ${strategy.description}")
+                    .flatMap { selectedFund ->
+                        logger.info("Skapar meddelande för ${strategy.description}")
 
-                    mailer.createHtmlMessage(selectedFund.fund, strategy)
-                }
-                .flatMap { message ->
-                    logger.info("Skickar meddelande för ${strategy.description}")
+//                        val message = mailer.createHtmlMessage(selectedFund.fund, strategy)
+//                        mailer.sendMail("Nytt val för PPM-fonder, ${strategy.description}!", message)
 
-                    mailer.sendMail("Nytt val för PPM-fonder, ${strategy.description}!", message)
-                }
-                .subscribe({ result ->
-                    logger.info("För strategi ${strategy.description}, resultat:", result)
-                }, { error ->
-                    logger.error("För strategi ${strategy.description}, fel:", error)
-                })
-        }
+                        Mono.just(strategy to selectedFund.fund)
+                    }
+                strategyFund
+
+
+            }
     }
 
     private fun updateTransactionInfo(composite: CompositeFund) {
@@ -132,7 +125,7 @@ class FundReaderService(
     }
 
 
-    fun createFundInfoMono(strategy: Strategy): Mono<FundInfo> {
+    fun readFundFromMorningstar(strategy: Strategy): Mono<FundInfo> {
 
         return morningstarClient.getFundList(strategy)
             .map { funds ->
@@ -142,25 +135,20 @@ class FundReaderService(
             }
     }
 
-    fun updatePrice() {
+    fun updatePrice(): Flux<Transaction> {
 
         logger.info("Updaterar priser")
 
-        readPrice(transactionRepository.findByBuyDateAndBuyPriceNull(LocalDate.now()))
+        val boughtFunds = readPrice(transactionRepository.findByBuyDateAndBuyPriceNull(LocalDate.now()))
             .flatMap { pair ->
                 logger.info("Uppdaterar köp-pris för fond ${pair.first.fund.name} till ${pair.second.price}")
 
                 val updatedTransaction = pair.first.copy(buyPrice = pair.second.price)
                 transactionRepository.save(updatedTransaction)
             }
-            .subscribe({ result ->
-                logger.info("Köp-pris för fond ${result.fund.name} uppdaterad.")
-            }, { error ->
-                logger.error("Kunde inte hämta köp-pris.", error)
-            })
 
 
-        readPrice(transactionRepository.findBySellDateAndSellPriceNull(LocalDate.now()))
+        val soldFunds = readPrice(transactionRepository.findBySellDateAndSellPriceNull(LocalDate.now()))
             .flatMap { pair ->
 
                 logger.info("Uppdaterar sälj-pris för fond ${pair.first.fund.name} till ${pair.second.price}")
@@ -183,13 +171,8 @@ class FundReaderService(
 
                 transactionRepository.save(updatedTransaction)
             }
-            .subscribe({ result ->
-                logger.info("Sälj-pris för fond ${result.fund.name} uppdaterad.")
-            }, { error ->
-                logger.error("Kunde inte hämta sälj-pris.", error)
-            })
 
-
+        return boughtFunds.concatWith(soldFunds)
     }
 
     fun readPrice(transactions: Flux<Transaction>): Flux<Pair<Transaction, FundInfo>> {

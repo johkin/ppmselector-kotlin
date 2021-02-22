@@ -40,18 +40,23 @@ class FundMailer(val environment: Environment) {
         return Mono.just(true)
     }
 
-    fun createHtmlMessage(fund: FundInfo, strategy: Strategy): Mono<String> {
-//
-//        val funds: List<FundInfo> = Arrays.asList(fund)
+    fun createHtmlMessage(fund: FundInfo, strategy: Strategy): String {
+
+//        val blockingWrapper = fromCallable( {
+//            "Hello"
+//        }).subscribeOn(Schedulers.boundedElastic())
+
+//        val funds = listOf(fund)
 //
 //        val args = HashMap<String, Any>()
 //        args.put("funds", funds)
 //        args.put("strategy", strategy)
 //
 //        val template = IOUtils.toString(javaClass.getResourceAsStream("/templates/mail.html"), "UTF-8")
-
+//
 //        return Mono.just(engine.renderString(template, args))
-        return Mono.just("hello")
+
+        return "hello"
     }
 
 }

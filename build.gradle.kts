@@ -28,7 +28,7 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-logging")
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-secretmanager")
 	implementation("org.springframework.cloud:spring-cloud-gcp-starter-metrics")
-	//implementation("org.springframework.cloud:spring-cloud-gcp-starter-trace")
+	implementation("org.springframework.cloud:spring-cloud-gcp-starter-trace")
 
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -39,6 +39,7 @@ dependencies {
 
 	implementation("com.sendgrid:sendgrid-java:4.6.7")
 	implementation("org.freemarker:freemarker:2.3.30")
+	implementation("commons-io:commons-io:2.8.0")
 
 	implementation("org.jsoup:jsoup:1.10.3")
 
