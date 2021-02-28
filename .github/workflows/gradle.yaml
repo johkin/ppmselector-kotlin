@@ -59,12 +59,9 @@ jobs:
           docker push "$REGISTRY_HOSTNAME"/"$IMAGE":latest
 
       - name: deploy master
-        if: contains(github.ref, 'master')
-        run: |
-          gcloud beta run ppmselector2 --image="$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} --platform=managed --region=europe-west1
-
+        if: "contains(github.ref, 'master')"
+        run: "gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1"
 
       - name: deploy branches
         if: "!contains(github.ref, 'master')"
-        run: |
-          gcloud beta run ppmselector2 --image="$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} --platform=managed --region=europe-west1 --tag=${GITHUB_REF##*/} --no-traffic
+        run: "gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --tag=${GITHUB_REF##*/} --no-traffic"
