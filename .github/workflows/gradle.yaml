@@ -68,6 +68,6 @@ jobs:
 
 
       # Deploy dev
-      - name: deploy master
+      - name: deploy branches
         if: !contains(github.ref, 'master')
         run: gcloud beta run ppmselector2 --image="$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} --platform=managed --region=europe-west1 --tag=${GITHUB_REF##*/} --no-traffic
