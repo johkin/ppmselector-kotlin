@@ -9,10 +9,9 @@ on:
       - '*'
 
 env:
-  PROJECT_ID: ppmselector-293109
   GITHUB_SHA: ${{ github.sha }}
   GITHUB_REF: ${{ github.ref }}
-  REGISTRY_HOSTNAME: eu.gcr.io/$PROJECT_ID
+  REGISTRY_HOSTNAME: eu.gcr.io/${{ secrets.GCP_PROJECT_ID }}
   IMAGE: ppmselector
 
 jobs:
@@ -64,9 +63,9 @@ jobs:
       - name: deploy master
         if: "contains(github.ref, 'master')"
         run: |
-          gcloud beta run deploy ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --project=$PROJECT_ID
+          gcloud beta run deploy ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --project=${{ secrets.GCP_PROJECT_ID }}
 
       - name: deploy branches
         if: "!contains(github.ref, 'master')"
         run: |
-          gcloud beta run deploy ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --project=$PROJECT_ID --tag=${GITHUB_REF##*/} --no-traffic
+          gcloud beta run deploy ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --project=${{ secrets.GCP_PROJECT_ID }} --tag=${GITHUB_REF##*/} --no-traffic
