@@ -61,7 +61,6 @@ jobs:
       - name: deploy master
         if: contains(github.ref, 'master')
         run: gcloud beta run ppmselector2 --image="$REGISTRY_HOSTNAME"/"$IMAGE":${{ github.sha }} --platform=managed --region=europe-west1
-#          gcloud run services update-traffic ppmselector2 --platform=managed --to-latest
 
       - name: deploy branches
         if: !contains(github.ref, 'master')
