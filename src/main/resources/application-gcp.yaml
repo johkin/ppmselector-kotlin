@@ -2,7 +2,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb+srv://johkin:dbpass@ppm.5tvva.gcp.mongodb.net/ppm?retryWrites=true&w=majority
+      uri: ${sm://mongo-uri}
       authentication-database: ppm
 
 server:

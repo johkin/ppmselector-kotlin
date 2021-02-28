@@ -43,6 +43,7 @@ jobs:
         with:
           service_account_key: ${{ secrets.GCP_SA }}
           export_default_credentials: true
+        run: gcloud components install beta
 
       - name: Setup docker authentication
         run: |
@@ -59,8 +60,10 @@ jobs:
 
       - name: deploy master
         if: "contains(github.ref, 'master')"
-        run: "gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1"
+        run: |
+          gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1
 
       - name: deploy branches
-        if: ${{!contains(github.ref, 'master')}}
-        run: "gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --tag=${GITHUB_REF##*/} --no-traffic"
+        if: "!contains(github.ref, 'master')"
+        run: |
+          gcloud beta run ppmselector2 --image=$REGISTRY_HOSTNAME/$IMAGE:${{ github.sha }} --platform=managed --region=europe-west1 --tag=${GITHUB_REF##*/} --no-traffic
