@@ -19,7 +19,7 @@ class MorningstarClient(val webClient: WebClient) {
         val builder =
             UriComponentsBuilder.fromHttpUrl("https://lt.morningstar.com/api/rest.svc/klr5zyak8x/security/screener")
         builder.queryParam("page", "1")
-        builder.queryParam("pageSize", "5")
+        builder.queryParam("pageSize", "20")
         builder.queryParam("sortOrder", strategy.parameterName)
         builder.queryParam("outputType", "json")
         builder.queryParam("version", "1")

@@ -16,7 +16,7 @@ data class Fund(
     val ReturnM60: Float,
     val StandardDeviationM60: Float,
     val OngoingCharge: Float,
-    val FundTNAV: String,
+    val FundTNAV: String?,
     val StarRatingM255: Int,
     val SustainabilityRank: Int,
     val TrailingDate: String,
