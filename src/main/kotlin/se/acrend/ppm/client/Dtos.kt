@@ -30,7 +30,7 @@ data class Fund(
     val ReturnM36: Float,
     val ReturnM120: Float,
     val MaxFrontEndLoad: Int,
-    val FeeLevel: String,
+    val FeeLevel: String?,
     val EquityStyleBox: Int,
     val PortfolioDate: String,
     val CollectedSRRI: Int,
