@@ -110,10 +110,11 @@ class FundReaderService(
             )
         )
             .flatMap {
-                transactionRepository.findByFundNameAndStrategyAndSellDateNull(
+                transactionRepository.findByFundNameAndStrategyAndSellDateNullOrderByBuyDateAsc(
                     composite.selected.fund.name,
                     composite.selected.strategy
                 )
+                    .next()
                     .log()
                     .flatMap { previousTransaction ->
                         transactionRepository.save(
