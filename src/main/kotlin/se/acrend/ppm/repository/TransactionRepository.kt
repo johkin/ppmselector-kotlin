@@ -14,6 +14,6 @@ interface TransactionRepository : ReactiveCrudRepository<Transaction, String> {
 
     fun findByBuyDateAndBuyPriceNull(buyDate: LocalDate): Flux<Transaction>
     fun findBySellDateAndSellPriceNull(sellDate: LocalDate): Flux<Transaction>
-    fun findByFundNameAndStrategyAndSellDateNull(fundName: String, strategy: Strategy): Mono<Transaction>
+    fun findByFundNameAndStrategyAndSellDateNullOrderByBuyDateAsc(fundName: String, strategy: Strategy): Flux<Transaction>
 
 }
