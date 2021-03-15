@@ -1,8 +1,10 @@
 pluginManagement {
 	repositories {
 		maven { url = uri("https://repo.spring.io/milestone") }
+		maven { url = uri("https://repo.spring.io/release") }
 		gradlePluginPortal()
 	}
+	/*
 	resolutionStrategy {
 		eachPlugin {
 			if (requested.id.id == "org.springframework.boot") {
@@ -10,5 +12,6 @@ pluginManagement {
 			}
 		}
 	}
+	 */
 }
 rootProject.name = "ppmselector"

@@ -1,9 +1,13 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
+import org.springframework.boot.gradle.tasks.run.BootRun
+
 plugins {
-	id("org.springframework.boot") version "2.3.4.RELEASE"
-	kotlin("jvm") version "1.4.0"
-	kotlin("plugin.spring") version "1.4.0"
+	id("org.springframework.boot") version "2.4.3"
+	kotlin("jvm") version "1.4.30"
+	kotlin("plugin.spring") version "1.4.30"
+	id("org.springframework.experimental.aot") version "0.9.0"
 }
 
 group = "se.acrend.ppm"
@@ -13,11 +17,13 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 repositories {
 	mavenCentral()
 	maven { url = uri("https://repo.spring.io/milestone") }
+	maven { url = uri("https://repo.spring.io/release") }
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.3.4.RELEASE"))
-	implementation(platform("org.springframework.cloud:spring-cloud-gcp-dependencies:1.2.5.RELEASE"))
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.3"))
+	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.0"))
+	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.1"))
 
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -25,10 +31,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
 	implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter-logging")
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter-secretmanager")
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter-metrics")
-	implementation("org.springframework.cloud:spring-cloud-gcp-starter-trace")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-logging")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-secretmanager")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-metrics")
+	implementation("com.google.cloud:spring-cloud-gcp-starter-trace")
 
 
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
@@ -64,4 +70,13 @@ tasks.withType<KotlinCompile> {
 		freeCompilerArgs = listOf("-Xjsr305=strict")
 		jvmTarget = "11"
 	}
+}
+/*
+tasks.withType<BootBuildImage> {
+	builder = "paketobuildpacks/builder:tiny"
+	environment = mapOf("BP_NATIVE_IMAGE" to "true")
+}
+*/
+tasks.bootRun {
+	args = listOf("--spring.profiles.active=local")
 }
