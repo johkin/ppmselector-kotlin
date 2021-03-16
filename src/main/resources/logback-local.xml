@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="false" scan="false" scanPeriod="60 seconds">
 
+  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
   <contextName>ppmselector</contextName>
 
   <springProfile name="local">
