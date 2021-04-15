@@ -4,10 +4,10 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-	id("org.springframework.boot") version "2.4.3"
+	id("org.springframework.boot") version "2.4.2"
 	kotlin("jvm") version "1.4.30"
 	kotlin("plugin.spring") version "1.4.30"
-	id("org.springframework.experimental.aot") version "0.9.0"
+	id("org.springframework.experimental.aot") version "0.9.1"
 }
 
 group = "se.acrend.ppm"
@@ -21,9 +21,9 @@ repositories {
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.3"))
-	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.0"))
-	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.1"))
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.2"))
+	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.2"))
+	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.2"))
 
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -71,12 +71,12 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "11"
 	}
 }
-/*
+
 tasks.withType<BootBuildImage> {
 	builder = "paketobuildpacks/builder:tiny"
 	environment = mapOf("BP_NATIVE_IMAGE" to "true")
 }
-*/
+
 tasks.bootRun {
-	args = listOf("--spring.profiles.active=local")
+	args = listOf("--spring.profiles.active=local", "--spring.cloud.gcp.project-id=ppmselector-293109")
 }
