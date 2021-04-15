@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration debug="true" scan="false">
 
-  <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-  <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
-
   <contextName>ppmselector</contextName>
 
   <springProfile name="local">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder>
