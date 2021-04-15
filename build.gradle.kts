@@ -72,11 +72,12 @@ tasks.withType<KotlinCompile> {
 	}
 }
 
+/*
 tasks.withType<BootBuildImage> {
 	builder = "paketobuildpacks/builder:tiny"
 	environment = mapOf("BP_NATIVE_IMAGE" to "true")
 }
-
+*/
 tasks.bootRun {
-	args = listOf("--spring.profiles.active=local", "--spring.cloud.gcp.project-id=ppmselector-293109")
+	args = listOf("--spring.profiles.active=local")
 }
