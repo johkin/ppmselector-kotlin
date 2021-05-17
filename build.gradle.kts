@@ -4,10 +4,10 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-	id("org.springframework.boot") version "2.4.2"
-	kotlin("jvm") version "1.4.30"
-	kotlin("plugin.spring") version "1.4.30"
-	id("org.springframework.experimental.aot") version "0.9.1"
+	id("org.springframework.boot") version "2.4.5"
+	kotlin("jvm") version "1.5.0"
+	kotlin("plugin.spring") version "1.5.0"
+	// id("org.springframework.experimental.aot") version "0.9.2"
 }
 
 group = "se.acrend.ppm"
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.2"))
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.5"))
 	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.2"))
 	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.2"))
 
@@ -79,5 +79,5 @@ tasks.withType<BootBuildImage> {
 }
 */
 tasks.bootRun {
-	args = listOf("--spring.profiles.active=local")
+	args = listOf("--spring.profiles.active=gcp")
 }
