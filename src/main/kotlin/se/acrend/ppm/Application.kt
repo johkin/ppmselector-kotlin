@@ -1,5 +1,6 @@
 package se.acrend.ppm
 
+import kotlinx.coroutines.debug.CoroutinesBlockHoundIntegration
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.config.AbstractReactiveMongoConfiguratio
 import org.springframework.data.mongodb.core.mapping.event.LoggingEventListener
 import org.springframework.data.mongodb.repository.config.EnableReactiveMongoRepositories
 import org.springframework.web.reactive.config.EnableWebFlux
+import reactor.blockhound.BlockHound
 import se.acrend.ppm.config.AppConfig
 import java.util.HashMap
 
@@ -38,5 +40,11 @@ class Application {
 }
 
 fun main(args: Array<String>) {
-    runApplication<Application>(*args)
+    runApplication<Application>(*args) {
+        BlockHound.builder()
+            .with(CoroutinesBlockHoundIntegration())
+            //.allowBlockingCallsInside(
+
+            //)
+    }
 }

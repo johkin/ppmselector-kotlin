@@ -1,5 +1,7 @@
 package se.acrend.ppm.repository
 
+import kotlinx.coroutines.flow.Flow
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -10,10 +12,10 @@ import java.time.LocalDate
 /**
  *
  */
-interface TransactionRepository : ReactiveCrudRepository<Transaction, String> {
+interface TransactionRepository : CoroutineCrudRepository<Transaction, String> {
 
-    fun findByBuyDateAndBuyPriceNull(buyDate: LocalDate): Flux<Transaction>
-    fun findBySellDateAndSellPriceNull(sellDate: LocalDate): Flux<Transaction>
-    fun findByFundNameAndStrategyAndSellDateNullOrderByBuyDateAsc(fundName: String, strategy: Strategy): Flux<Transaction>
+    fun findByBuyDateAndBuyPriceNull(buyDate: LocalDate): Flow<Transaction>
+    fun findBySellDateAndSellPriceNull(sellDate: LocalDate): Flow<Transaction>
+    fun findByFundNameAndStrategyAndSellDateNullOrderByBuyDateAsc(fundName: String, strategy: Strategy): Flow<Transaction>
 
 }

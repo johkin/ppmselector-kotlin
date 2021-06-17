@@ -11,7 +11,7 @@ data class Fund(
     val SecId: String,
     val Name: String,
     val PriceCurrency: String,
-    val TenforeId: String,
+    val TenforeId: String?,
     val ReturnM0: Float,
     val ReturnM60: Float,
     val StandardDeviationM60: Float,

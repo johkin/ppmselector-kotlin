@@ -1,5 +1,6 @@
 package se.acrend.ppm.client
 
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -30,27 +31,30 @@ class MorningstarClientTest {
     @Test
     @Disabled
     fun getFundList() {
+        runBlocking {
 
-        val list = client.getFundList(OneMonth).block()
+            val list = client.getFundList(OneMonth)
 
-        println(list)
-
+            println(list)
+        }
     }
 
     @Test
-    @Disabled
+    //@Disabled
     fun getFundListParallell() {
 
+        runBlocking {
 
-        Strategy.values().map { s ->
-            client.getFundList(s, "LU0359201612")
-                .subscribe { l ->
-                    println(l)
-                }
+
+            Strategy.values().map { s ->
+                client.getFundList(s, "LU0359201612")
+                    .onEach { l ->
+                        println(l)
+                    }
+            }
         }
 
-        Thread.sleep(10000)
-
+        //Thread.sleep(10000)
 
 
     }

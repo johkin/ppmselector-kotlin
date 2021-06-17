@@ -1,20 +1,13 @@
 package se.acrend.ppm.handler
 
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.BodyInserters.fromValue
 import org.springframework.web.reactive.function.server.ServerRequest
 import org.springframework.web.reactive.function.server.ServerResponse
 import reactor.core.publisher.Mono
-import se.acrend.ppm.domain.SelectedFund
 import se.acrend.ppm.domain.Strategy
-import se.acrend.ppm.domain.Transaction
 import se.acrend.ppm.repository.SelectedFundRepository
 import se.acrend.ppm.repository.TransactionRepository
-import java.util.stream.Collectors.groupingBy
-import java.util.stream.Collectors.mapping
-import java.util.stream.Collectors.toList
 
 /**
  *
@@ -25,7 +18,7 @@ class ApiHandler(
     val selectedFundRepository: SelectedFundRepository
 ) {
 
-    fun getTransactions(request: ServerRequest): Mono<ServerResponse> {
+    /*suspend fun getTransactions(request: ServerRequest): ServerResponse {
 
         val apiTransactionMono = transactionRepository.findAll()
             .sort(Comparator.comparing(Transaction::buyDate))
@@ -94,7 +87,7 @@ class ApiHandler(
         } else {
             0f
         }
-    }
+    }*/
 
     fun getStrategies(request: ServerRequest): Mono<ServerResponse> {
 

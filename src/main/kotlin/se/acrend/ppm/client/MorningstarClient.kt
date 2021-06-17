@@ -1,20 +1,18 @@
 package se.acrend.ppm.client
 
+import kotlinx.coroutines.reactor.awaitSingle
 import org.springframework.stereotype.Component
-import org.springframework.stereotype.Service
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.util.UriComponentsBuilder
-import reactor.core.publisher.Mono
 import se.acrend.ppm.domain.Strategy
 import se.acrend.ppm.parser.Fund
 import se.acrend.ppm.parser.FundsResponse
-import java.time.Duration.ofSeconds
 
 @Component
 class MorningstarClient(val webClient: WebClient) {
 
 
-    fun getFundList(strategy: Strategy, term: String = ""): Mono<List<Fund>> {
+    suspend fun getFundList(strategy: Strategy, term: String = ""): List<Fund> {
 
         val builder =
             UriComponentsBuilder.fromHttpUrl("https://lt.morningstar.com/api/rest.svc/klr5zyak8x/security/screener")
@@ -39,7 +37,7 @@ class MorningstarClient(val webClient: WebClient) {
             .retrieve()
             .bodyToMono(FundsResponse::class.java)
             .map { response -> response.rows }
-
+            .awaitSingle()
 
         return response
     }

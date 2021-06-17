@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<configuration debug="false" scan="false" scanPeriod="60 seconds">
+<configuration debug="true" scan="false">
 
   <contextName>ppmselector</contextName>
 
   <springProfile name="local">
+
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml" />
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
       <encoder>
@@ -20,8 +23,8 @@
 
   <springProfile name="gcp">
 
-    <include resource="org/springframework/cloud/gcp/autoconfigure/logging/logback-json-appender.xml" />
-    
+    <include resource="com/google/cloud/spring/logging/logback-json-appender.xml" />
+
     <root level="INFO">
       <appender-ref ref="CONSOLE_JSON" />
     </root>
