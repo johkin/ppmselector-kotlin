@@ -22,8 +22,8 @@ repositories {
 
 dependencies {
 	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.5"))
-	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.2"))
-	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.2"))
+	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.3"))
+	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.3"))
 
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.0")
 	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.5.0")
