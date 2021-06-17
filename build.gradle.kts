@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootBuildImage
 import org.springframework.boot.gradle.tasks.run.BootRun
 
 plugins {
-	id("org.springframework.boot") version "2.5.1"
+	id("org.springframework.boot") version "2.4.6"
 	kotlin("jvm") version "1.5.0"
 	kotlin("plugin.spring") version "1.5.0"
 	// id("org.springframework.experimental.aot") version "0.9.2"
@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.5.1"))
+	implementation(platform("org.springframework.boot:spring-boot-dependencies:2.4.6"))
 	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.3"))
 	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.3"))
 
