@@ -12,7 +12,7 @@ import se.acrend.ppm.service.FundReaderService
  */
 @Configuration
 class CronRouter(val fundReaderService: FundReaderService) {
-
+/*
     @Bean
     fun cronRoutes() = router {
 
@@ -33,5 +33,5 @@ class CronRouter(val fundReaderService: FundReaderService) {
         }
 
     }
-
+*/
 }

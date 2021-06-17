@@ -1,0 +1,11 @@
+GET http://localhost:8080/cron/readFunds
+Accept: application/json
+
+
+###
+
+GET http://localhost:8080/cron/updatePrice
+Accept: application/json
+
+
+###

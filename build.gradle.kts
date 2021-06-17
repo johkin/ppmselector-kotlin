@@ -25,6 +25,11 @@ dependencies {
 	implementation(platform("com.google.cloud:spring-cloud-gcp-dependencies:2.0.2"))
 	implementation(platform("org.springframework.cloud:spring-cloud-dependencies:2020.0.2"))
 
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.5.0")
+	implementation("org.jetbrains.kotlinx:kotlinx-coroutines-debug:1.5.0")
+	implementation("io.projectreactor.tools:blockhound:1.0.6.RELEASE")
+
+
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-freemarker")

@@ -1,5 +1,6 @@
 package se.acrend.ppm.repository
 
+import org.springframework.data.repository.kotlin.CoroutineCrudRepository
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import reactor.core.publisher.Mono
 import se.acrend.ppm.domain.SelectedFund
@@ -8,9 +9,9 @@ import se.acrend.ppm.domain.Strategy
 /**
  *
  */
-interface SelectedFundRepository : ReactiveCrudRepository<SelectedFund, String> {
+interface SelectedFundRepository : CoroutineCrudRepository<SelectedFund, String> {
 
-    fun findByStrategy(strategy: Strategy): Mono<SelectedFund>
+    suspend fun findByStrategy(strategy: Strategy): SelectedFund?
 
 
 }
